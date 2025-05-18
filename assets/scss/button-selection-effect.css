@@ -1,0 +1,98 @@
+/* 暗黑模式下选中按钮的强化效果 */
+.theme-dark .btn-orange,
+html.theme-dark .btn-orange,
+body.theme-dark .btn-orange {
+  transform: scale(1.05) !important;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out !important;
+}
+
+.theme-dark .btn-green,
+html.theme-dark .btn-green,
+body.theme-dark .btn-green {
+  transform: scale(1.05) !important;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out !important;
+}
+
+/* 特别加强工具面板中的按钮组选择效果 */
+.theme-dark .tool-panel .btn-list .btn-item .btn-orange,
+html.theme-dark .tool-panel .btn-list .btn-item .btn-orange,
+body.theme-dark .tool-panel .btn-list .btn-item .btn-orange {
+  background: #ffb300 !important;
+  border-color: #ffb300 !important;
+  color: #000 !important;
+  box-shadow: 0 0 12px rgba(255, 179, 0, 0.8) !important;
+  position: relative;
+  z-index: 2;
+}
+
+.theme-dark .tool-panel .btn-list .btn-item .btn-green,
+html.theme-dark .tool-panel .btn-list .btn-item .btn-green,
+body.theme-dark .tool-panel .btn-list .btn-item .btn-green {
+  background: #2db67c !important;
+  border-color: #2db67c !important;
+  color: #000 !important;
+  box-shadow: 0 0 12px rgba(45, 182, 124, 0.8) !important;
+  position: relative;
+  z-index: 2;
+}
+
+/* 确保所有按钮都有平滑过渡效果 */
+.theme-dark .btn,
+html.theme-dark .btn,
+body.theme-dark .btn {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out, background-color 0.2s ease-in-out !important;
+}
+
+/* 特别针对四个重点区域的按钮强制设置样式 */
+.theme-dark .tool-panel section:nth-child(1) .btn-orange,
+.theme-dark .tool-panel section:nth-child(2) .btn-orange,
+.theme-dark .tool-panel section:nth-child(4) .btn-orange,
+.theme-dark .tool-panel section:nth-child(13) .btn-orange,
+html.theme-dark .tool-panel section:nth-child(1) .btn-orange,
+html.theme-dark .tool-panel section:nth-child(2) .btn-orange,
+html.theme-dark .tool-panel section:nth-child(4) .btn-orange,
+html.theme-dark .tool-panel section:nth-child(13) .btn-orange,
+body.theme-dark .tool-panel section:nth-child(1) .btn-orange,
+body.theme-dark .tool-panel section:nth-child(2) .btn-orange,
+body.theme-dark .tool-panel section:nth-child(4) .btn-orange,
+body.theme-dark .tool-panel section:nth-child(13) .btn-orange {
+  background: #ffb300 !important;
+  border-color: #e89c00 !important;
+  color: #000 !important;
+  box-shadow: 0 0 15px rgba(255, 179, 0, 0.9) !important;
+  transform: scale(1.08) !important;
+  font-weight: bold !important;
+}
+
+/* 解决按钮样式冲突，确保选中样式最高优先级 */
+html.theme-dark body .btn-orange,
+body.theme-dark .btn-orange,
+html.theme-dark body .tool-panel .btn-list .btn-item .btn-orange,
+body.theme-dark .tool-panel .btn-list .btn-item .btn-orange {
+  background: #ffb300 !important;
+  border-color: #ffb300 !important;
+  color: #000 !important;
+}
+
+/* 自动主题模式 */
+@media (prefers-color-scheme: dark) {
+  .theme-auto .btn-orange,
+  html.theme-auto .btn-orange,
+  body.theme-auto .btn-orange {
+    transform: scale(1.05) !important;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out !important;
+  }
+
+  .theme-auto .btn-green,
+  html.theme-auto .btn-green,
+  body.theme-auto .btn-green {
+    transform: scale(1.05) !important;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out !important;
+  }
+
+  .theme-auto .btn,
+  html.theme-auto .btn,
+  body.theme-auto .btn {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out, background-color 0.2s ease-in-out !important;
+  }
+}

@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="zh-CN" :class="{'theme-dark': config && config.theme === 'black', 'theme-auto': config && config.theme === 'auto'}">
+<head>
+    <meta charset="UTF-8">
+    <title>五笔码表助手配置</title>
+    <link rel="stylesheet" href="../../assets/scss/wubi.css">
+    <link rel="stylesheet" href="../../assets/scss/custom-dialog.css">
+    <link rel="stylesheet" href="../../assets/scss/custom-dialog-dark.css">
+    <link rel="stylesheet" href="../../assets/scss/sync-styles.css">
+    <link rel="stylesheet" href="../../assets/scss/form-dark.css">
+    <link rel="stylesheet" href="../../assets/scss/layout-dark.css">    <link rel="stylesheet" href="../../assets/scss/button-dark.css">    <link rel="stylesheet" href="../../assets/scss/config-dark.css">    <link rel="stylesheet" href="../../assets/scss/content-dark.css">
+    <link rel="stylesheet" href="../../assets/scss/override-inline.css">
+    <link rel="stylesheet" href="../../assets/scss/dark-blue-fix.css">
+    <link rel="stylesheet" href="../../assets/scss/tool-panel-dark.css">
+    <link rel="stylesheet" href="../../assets/scss/active-button-dark.css">
+    <link rel="stylesheet" href="../../assets/scss/sync-file-list.css">
+    <link rel="stylesheet" href="../../assets/scss/force-dark-override.css">
+</head>
+<body class="config" :class="{'theme-dark': config && config.theme === 'black', 'theme-auto': config && config.theme === 'auto'}">
+
+<div v-cloak id="app" class="container">
+
+    <section v-if="config && config.fileNameList">
+        <div class="section-title">
+            <h3>1. 选择初始文件</h3>
+            <div class="desc">程序打开时，自动载入的码表文件</div>
+        </div>
+        <div class="section-content">
+            <div class="config-file-list">
+                <div @click="setInitFile(file)"
+                     :class="['config-file-list-item', {active: file.path === config.initFileName}]"
+                     v-for="(file, index) in config.fileNameList"
+                     :key="index"
+                     v-if="config.fileNameList"
+                >
+                    <div class="name">{{file.name}}</div>
+                    <div class="path">{{file.path}}</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section v-if="config && config.fileNameList">
+        <div class="section-title">
+            <h3>2. 命名码表文件</h3>
+            <div class="desc">个性化配置文件名称，修改后，请重启软件</div>
+        </div>
+        <div class="section-content">
+            <div class="rename-file-list">
+                <div
+                    class="rename-file-list-item"
+                    v-for="(file, index) in config.fileNameList" :key="index"
+                    v-if="config.fileNameList">
+                    <input v-model="file.name"/>
+                    <div class="filepath">{{ file.path }}</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="section-title">
+            <h3>3. 自动部署</h3>
+            <div class="desc">添加新用户词之后，是否保存，是否自动部署</div>
+        </div>
+        <div class="section-content">
+            <div class="check-item">
+                <div class="label">加词后，自动保存并部署输入法</div>
+                <div class="audio-switch">
+                    <input v-model="config.autoDeployOnAdd" checked type="checkbox" id="autoDeployAdd">
+                    <label for="autoDeployAdd"></label>
+                </div>
+            </div>
+            <div class="check-item">
+                <div class="label">删词后，自动保存并部署输入法</div>
+                <div class="audio-switch">
+                    <input v-model="config.autoDeployOnDelete" checked type="checkbox" id="autoDeployDelete">
+                    <label for="autoDeployDelete"></label>
+                </div>
+            </div>
+            <div class="check-item">
+                <div class="label">编辑词后，自动保存并部署输入法</div>
+                <div class="audio-switch">
+                    <input v-model="config.autoDeployOnEdit" checked type="checkbox" id="autoDeployEdit">
+                    <label for="autoDeployEdit"></label>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section v-if="config && config.fileNameList">
+        <div class="section-title">
+            <h3>4. 指定主码表文件</h3>
+            <div class="desc">自定义指定你的主码表文件，在搜索词条展示已存在词条时有用。设置完成后重启程序后生效。</div>
+        </div>
+        <div class="section-content">
+            <div class="config-file-list">
+                <div @click="setMainDictFile(file)"
+                     :class="['config-file-list-item', {active: file.path === config.mainDictFileName}]"
+                     v-for="(file, index) in config.fileNameList"
+                     :key="index"
+                     v-if="config.fileNameList"
+                >
+                    <div class="name">{{file.name}}</div>
+                    <div class="path">{{file.path}}</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="section-title">
+            <h3>5. 回车动作</h3>
+            <div class="desc">定义搜索框中按回车键的动作</div>
+        </div>
+        <div class="section-content">
+            <div class="check-list">
+                <div class="check-item">
+                    <div class="checkbox-cell">
+                        <input value="add"
+                               v-model="config.enterKeyBehavior"
+                               name="enterKey" id="radioAddNew" type="radio">
+                        <label class="radio" for="radioAddNew"></label>
+                    </div>
+                    <div class="label">添加新词</div>
+                </div>
+                <div class="check-item">
+                    <div class="checkbox-cell">
+                        <input value="search"
+                               v-model="config.enterKeyBehavior"
+                               name="enterKey" id="radioSearch" type="radio">
+                        <label class="radio" for="radioSearch"></label>
+                    </div>
+                    <div class="label">搜索</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="section-title">
+            <h3>6. 搜索</h3>
+            <div class="desc">搜索匹配的内容</div>
+        </div>
+        <div class="section-content">
+            <div class="check-list">
+                <div class="check-item">
+                    <div class="checkbox-cell">
+                        <input value="code"
+                               v-model="config.searchMethod"
+                               name="searchMethod" id="radioSearchCode" type="radio">
+                        <label class="radio" for="radioSearchCode"></label>
+                    </div>
+                    <div class="label">编码</div>
+                </div>
+                <div class="check-item">
+                    <div class="checkbox-cell">
+                        <input value="phrase"
+                               v-model="config.searchMethod"
+                               name="searchMethod" id="radioSearchPhrase" type="radio">
+                        <label class="radio" for="radioSearchPhrase"></label>
+                    </div>
+                    <div class="label">词条</div>
+                </div>
+                <div class="check-item">
+                    <div class="checkbox-cell">
+                        <input value="both"
+                               v-model="config.searchMethod"
+                               name="searchMethod" id="radioSearchBoth" type="radio">
+                        <label class="radio" for="radioSearchBoth"></label>
+                    </div>
+                    <div class="label">编码 和 词条</div>
+                </div>
+                <div class="check-item">
+                    <div class="checkbox-cell">
+                        <input value="any"
+                               v-model="config.searchMethod"
+                               name="searchMethod" id="radioSearchAny" type="radio">
+                        <label class="radio" for="radioSearchAny"></label>
+                    </div>
+                    <div class="label">编码 或 词条</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="section-title">
+            <h3>7. 选取输入法配置文件目录</h3>
+            <div class="desc">工具自动读取的输入法配置文件目录</div>
+        </div>
+        <div class="section-content">
+            <div class="check-item">
+                <p>{{config.rimeHomeDir || '默认目录'}}</p>
+                <div class="btn btn-primary" @click="chooseRimeHomeDir">选择目录</div>
+                <div v-if="config.rimeHomeDir" class="btn btn-orange" @click="clearRimeHomeDir">清除设置</div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="section-title">
+            <h3>8. 选取输入法程序目录 ( 适用于 Windows )</h3>
+            <div class="desc">程序安装在了什么位置，用于自动部署</div>
+        </div>
+        <div class="section-content">
+            <div class="check-item">
+                <p>{{config.rimeExecDir || '默认目录'}}</p>
+                <div class="btn btn-primary" @click="chooseRimeExecDir">选择目录</div>
+                <div v-if="config.rimeExecDir" class="btn btn-orange" @click="clearRimeExecDir">清除设置</div>
+            </div>
+        </div>
+    </section>
+    <section>
+        <div class="section-title">
+            <h3>9. 选择参考码表</h3>
+            <div class="desc">添加新词时、批量生成编码时，使用的码表，格式：前词后码，tab 分隔。</div>
+            <div class="desc">正常的 Rime 码表文件都能正常使用，有多字也无所谓，程序会自动只选取单字部分使用。</div>
+            <div class="desc">默认情况下，程序使用 wubi86_jidian.dict.yaml 这个文件作为参考码表。</div>
+            <div class="desc">可以载入任意版本的五笔码表文件，这样就能生成对应版本的五笔编码了。</div>
+        </div>
+        <div class="section-content">
+            <div class="check-item">
+                <p>{{config.hasSetDictMap? '已添加码表文件': '请选择码表文件'}}</p>
+                <div class="btn btn-primary" @click="setDictMap">选择文件</div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="section-title">
+            <h3>10. 主题</h3>
+            <div class="desc">切换主题</div>
+        </div>
+        <div class="section-content">
+            <div class="check-list">
+                <div class="check-item">
+                    <div class="checkbox-cell">
+                        <input value="black"
+                               v-model="config.theme"
+                               name="theme" id="themeBlack" type="radio">
+                        <label class="radio" for="themeBlack"></label>
+                    </div>
+                    <div class="label">暗黑</div>
+                </div>
+                <div class="check-item">
+                    <div class="checkbox-cell">
+                        <input value="white"
+                               v-model="config.theme"
+                               name="theme" id="themeWhite" type="radio">
+                        <label class="radio" for="themeWhite"></label>
+                    </div>
+                    <div class="label">明亮</div>
+                </div>
+                <div class="check-item">
+                    <div class="checkbox-cell">
+                        <input value="auto"
+                               v-model="config.theme"
+                               name="theme" id="themeAuto" type="radio">
+                        <label class="radio" for="themeAuto"></label>
+                    </div>
+                    <div class="label">跟随系统</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="section-title">
+            <h3>11. GitHub 仓库 API 配置</h3>
+            <div class="desc">用于远程同步词库，建议使用具有repo权限的Personal Access Token。修改后请保存并重启。</div>
+        </div>
+        <div class="section-content">
+            <div class="form-group">
+                <label>GitHub 用户名(owner)：</label>
+                <input v-model="config.githubOwner" placeholder="如 sweetyknight" />
+            </div>
+            <div class="form-group">
+                <label>仓库名(repo)：</label>
+                <input v-model="config.githubRepo" placeholder="如 wubi-dict-editor" />
+            </div>
+            <div class="form-group">
+                <label>分支(branch)：</label>
+                <input v-model="config.githubBranch" placeholder="如 main" />
+            </div>
+            <div class="form-group">
+                <label>同步文件夹(可选)：</label>
+                <input v-model="config.githubFolder" placeholder="如 dicts，留空则为仓库根目录" />
+            </div>
+            <div class="form-group">
+                <label>GitHub Token：</label>
+                <input v-model="config.githubToken" placeholder="Personal Access Token" type="password" />
+            </div>
+            <div class="form-group">
+                <span style="color:#d8000c;font-size:13px;">请妥善保管Token，勿泄露！</span>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="section-title">
+            <h3>12. 同步词典文件</h3>
+            <div class="desc">指定需要与GitHub仓库同步的词典文件，可自定义选择或一键恢复默认。</div>
+        </div>        <div class="section-content">
+            <div style="display:flex;align-items:center;gap:16px;margin-bottom:10px;">
+                <button class="btn btn-primary" @click="setDefaultSyncFiles" style="min-width:90px;background:#2db67c;border:none;">默认</button>
+                <button class="btn btn-orange" @click="chooseSyncFiles" style="min-width:90px;background:#ffb300;border:none;">选择</button>
+                <span style="color:#888;font-size:13px;">（可多选，支持自定义）</span>
+            </div>
+            <div class="sync-file-list">
+                <template v-if="config.syncDictFiles && config.syncDictFiles.length">
+                    <div v-for="(file, idx) in config.syncDictFiles" :key="file" class="sync-file-item">
+                        <span style="font-family:monospace;font-size:15px;">{{file}}</span>
+                        <span class="remove-x" @click="removeSyncFile(idx)" title="移除">×</span>
+                    </div>
+                </template>
+                <span v-else style="color:#bbb;font-size:14px;align-self:center;">未选择词典</span>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<script src="Config.js"></script>
+</body>
+</html>

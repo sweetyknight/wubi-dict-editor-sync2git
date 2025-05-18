@@ -1,0 +1,264 @@
+/* Button styles for dark mode */
+.theme-dark .btn,
+html.theme-dark .btn,
+body.theme-dark .btn {
+  color: #e6e6e6;
+  background-color: #383f4a !important;
+  border-color: #252a31 !important;
+}
+
+.theme-dark .btn:hover,
+html.theme-dark .btn:hover,
+body.theme-dark .btn:hover {
+  background-color: #464f5f !important;
+  border-color: #303540 !important;
+}
+
+.theme-dark .btn-primary,
+html.theme-dark .btn-primary,
+body.theme-dark .btn-primary {
+  background: #4a5260 !important;
+  border-color: #323842 !important;
+  color: #81fffa !important;
+}
+
+.theme-dark .btn-primary:hover,
+html.theme-dark .btn-primary:hover,
+body.theme-dark .btn-primary:hover {
+  background: #5a6270 !important;
+  border-color: #4a5260 !important;
+}
+
+.theme-dark .btn-green,
+html.theme-dark .btn-green,
+body.theme-dark .btn-green {
+  background: #2db67c !important;
+  border-color: #2db67c !important;
+  color: #000 !important;
+  box-shadow: 0 0 8px rgba(45, 182, 124, 0.7) !important;
+  position: relative;
+  z-index: 1;
+}
+
+.theme-dark .btn-orange,
+html.theme-dark .btn-orange,
+body.theme-dark .btn-orange {
+  background: #ffb300 !important;
+  border-color: #ffb300 !important;
+  color: #000 !important;
+  box-shadow: 0 0 8px rgba(255, 179, 0, 0.7) !important;
+  position: relative;
+  z-index: 1;
+}
+
+.theme-dark .btn-blue,
+html.theme-dark .btn-blue,
+body.theme-dark .btn-blue {
+  background: #4a5260 !important;
+  border-color: #323842 !important;
+  color: #81fffa !important;
+}
+
+.theme-dark .btn-blue:hover,
+html.theme-dark .btn-blue:hover,
+body.theme-dark .btn-blue:hover {
+  background: #5a6270 !important;
+  border-color: #4a5260 !important;
+}
+
+.theme-dark .btn-alt-blue,
+html.theme-dark .btn-alt-blue,
+body.theme-dark .btn-alt-blue {
+  border-color: transparent !important;
+  background-color: transparent !important;
+  color: #81fffa !important;
+}
+
+/* 自动主题模式的按钮样式 */
+@media (prefers-color-scheme: dark) {
+  .theme-auto .btn-primary,
+  html.theme-auto .btn-primary,
+  body.theme-auto .btn-primary {
+    background: #4a5260 !important;
+    border-color: #323842 !important;
+    color: #81fffa !important;
+  }
+
+  .theme-auto .btn-primary:hover,
+  html.theme-auto .btn-primary:hover,
+  body.theme-auto .btn-primary:hover {
+    background: #5a6270 !important;
+    border-color: #4a5260 !important;
+  }
+
+  .theme-auto .btn-blue,
+  html.theme-auto .btn-blue,
+  body.theme-auto .btn-blue {
+    background: #4a5260 !important;
+    border-color: #323842 !important;
+    color: #81fffa !important;
+  }
+
+  .theme-auto .btn-blue:hover,
+  html.theme-auto .btn-blue:hover,
+  body.theme-auto .btn-blue:hover {
+    background: #5a6270 !important;
+    border-color: #4a5260 !important;
+  }
+
+  .theme-auto .btn-alt-blue,
+  html.theme-auto .btn-alt-blue,
+  body.theme-auto .btn-alt-blue {
+    border-color: transparent !important;
+    background-color: transparent !important;
+    color: #81fffa !important;
+  }
+}
+
+/* Search bar and related elements */
+.theme-dark .search-bar,
+html.theme-dark .search-bar,
+body.theme-dark .search-bar {
+  background-color: #1c1f24 !important;
+  border-bottom-color: #383f4a !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25) !important;
+}
+
+.theme-dark .search-bar input,
+html.theme-dark .search-bar input,
+body.theme-dark .search-bar input {
+  background-color: #383f4a !important;
+  color: #e6e6e6 !important;
+  border-color: #4a4a4a !important;
+}
+
+.theme-dark .search-bar input:focus,
+html.theme-dark .search-bar input:focus,
+body.theme-dark .search-bar input:focus {
+  border-color: #81fffa !important;
+}
+
+.theme-dark .btn-clear,
+html.theme-dark .btn-clear,
+body.theme-dark .btn-clear {
+  background-color: #383f4a !important;
+}
+
+.theme-dark .notice,
+html.theme-dark .notice,
+body.theme-dark .notice {
+  color: #a0a0a0 !important;
+}
+
+/* Word items */
+.theme-dark .word-item,
+html.theme-dark .word-item,
+body.theme-dark .word-item {
+  color: #e6e6e6 !important;
+}
+
+.theme-dark .word-item:hover,
+html.theme-dark .word-item:hover,
+body.theme-dark .word-item:hover {
+  background-color: #383f4a !important;
+}
+
+.theme-dark .word-item .code,
+html.theme-dark .word-item .code,
+body.theme-dark .word-item .code {
+  color: #a0a0a0 !important;
+}
+
+/* Auto theme with system preference */
+@media (prefers-color-scheme: dark) {
+  .theme-auto .btn,
+  html.theme-auto .btn,
+  body.theme-auto .btn {
+    color: #e6e6e6;
+  }
+
+  .theme-auto .btn-primary,
+  html.theme-auto .btn-primary,
+  body.theme-auto .btn-primary {
+    background: #383f4a !important;
+    border-color: #4a4a4a !important;
+    color: #e6e6e6 !important;
+  }
+
+  .theme-auto .btn-primary:hover,
+  html.theme-auto .btn-primary:hover,
+  body.theme-auto .btn-primary:hover {
+    background: #4a4a4a !important;
+    border-color: #555 !important;
+  }
+
+  .theme-auto .btn-green,
+  html.theme-auto .btn-green,
+  body.theme-auto .btn-green {
+    background: #2db67c !important;
+    border-color: #2db67c !important;
+    color: #000 !important;
+  }
+
+  .theme-auto .btn-orange,
+  html.theme-auto .btn-orange,
+  body.theme-auto .btn-orange {
+    background: #ffb300 !important;
+    border-color: #ffb300 !important;
+    color: #000 !important;
+  }
+
+  /* Search bar and related elements */
+  .theme-auto .search-bar,
+  html.theme-auto .search-bar,
+  body.theme-auto .search-bar {
+    background-color: #1c1f24 !important;
+    border-bottom-color: #383f4a !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25) !important;
+  }
+
+  .theme-auto .search-bar input,
+  html.theme-auto .search-bar input,
+  body.theme-auto .search-bar input {
+    background-color: #383f4a !important;
+    color: #e6e6e6 !important;
+    border-color: #4a4a4a !important;
+  }
+
+  .theme-auto .search-bar input:focus,
+  html.theme-auto .search-bar input:focus,
+  body.theme-auto .search-bar input:focus {
+    border-color: #81fffa !important;
+  }
+
+  .theme-auto .btn-clear,
+  html.theme-auto .btn-clear,
+  body.theme-auto .btn-clear {
+    background-color: #383f4a !important;
+  }
+
+  .theme-auto .notice,
+  html.theme-auto .notice,
+  body.theme-auto .notice {
+    color: #a0a0a0 !important;
+  }
+
+  /* Word items */
+  .theme-auto .word-item,
+  html.theme-auto .word-item,
+  body.theme-auto .word-item {
+    color: #e6e6e6 !important;
+  }
+
+  .theme-auto .word-item:hover,
+  html.theme-auto .word-item:hover,
+  body.theme-auto .word-item:hover {
+    background-color: #383f4a !important;
+  }
+
+  .theme-auto .word-item .code,
+  html.theme-auto .word-item .code,
+  body.theme-auto .word-item .code {
+    color: #a0a0a0 !important;
+  }
+}

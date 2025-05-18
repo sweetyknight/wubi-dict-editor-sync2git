@@ -1,0 +1,99 @@
+/* 修复暗黑模式下的蓝色元素 */
+.theme-dark .file-list .file-list-item.active,
+.theme-dark .file-list .file-list-item:active,
+html.theme-dark .file-list .file-list-item.active,
+html.theme-dark .file-list .file-list-item:active,
+body.theme-dark .file-list .file-list-item.active,
+body.theme-dark .file-list .file-list-item:active {
+  background-color: #81fffa !important;
+  color: black !important;
+}
+
+.theme-dark .origin.blue,
+html.theme-dark .origin.blue,
+body.theme-dark .origin.blue {
+  color: #81fffa !important;
+}
+
+/* 暗黑模式下的主色调 */
+.theme-dark .text-primary,
+.theme-dark .primary-color,
+.theme-dark a,
+.theme-dark .link,
+.theme-dark a.link,
+html.theme-dark .text-primary,
+html.theme-dark .primary-color,
+html.theme-dark a,
+html.theme-dark .link,
+html.theme-dark a.link,
+body.theme-dark .text-primary,
+body.theme-dark .primary-color,
+body.theme-dark a,
+body.theme-dark .link,
+body.theme-dark a.link {
+  color: #81fffa !important;
+}
+
+.theme-dark .bg-primary,
+.theme-dark .primary-bg,
+html.theme-dark .bg-primary,
+html.theme-dark .primary-bg,
+body.theme-dark .bg-primary,
+body.theme-dark .primary-bg {
+  background-color: #81fffa !important;
+  color: black !important;
+}
+
+/* 修复容器背景 */
+.theme-dark .container.tool-container, 
+html.theme-dark .container.tool-container,
+body.theme-dark .container.tool-container {
+  background-color: #0f0f13 !important;
+}
+
+/* 自动主题检测样式 */
+@media (prefers-color-scheme: dark) {
+  .theme-auto .file-list .file-list-item.active,
+  .theme-auto .file-list .file-list-item:active,
+  html.theme-auto .file-list .file-list-item.active,
+  html.theme-auto .file-list .file-list-item:active,
+  body.theme-auto .file-list .file-list-item.active,
+  body.theme-auto .file-list .file-list-item:active {
+    background-color: #81fffa !important;
+    color: black !important;
+  }
+
+  .theme-auto .origin.blue,
+  html.theme-auto .origin.blue,
+  body.theme-auto .origin.blue {
+    color: #81fffa !important;
+  }
+
+  .theme-auto .text-primary,
+  .theme-auto .primary-color,
+  .theme-auto a,
+  html.theme-auto .text-primary,
+  html.theme-auto .primary-color,
+  html.theme-auto a,
+  body.theme-auto .text-primary,
+  body.theme-auto .primary-color,
+  body.theme-auto a {
+    color: #81fffa !important;
+  }
+  .theme-auto .bg-primary,
+  .theme-auto .primary-bg,
+  html.theme-auto .bg-primary,
+  html.theme-auto .primary-bg,
+  body.theme-auto .bg-primary,
+  body.theme-auto .primary-bg {
+    background-color: #81fffa !important;
+    color: black !important;
+  }
+  
+  /* 修复容器背景 */
+  .theme-auto .container.tool-container, 
+  html.theme-auto .container.tool-container,
+  body.theme-auto .container.tool-container {
+    background-color: #0f0f13 !important;
+  }
+}

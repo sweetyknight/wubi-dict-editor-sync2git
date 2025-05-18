@@ -1,0 +1,93 @@
+/* 
+ * Sync related styles
+ * This file contains styles for the sync functionality
+ */
+
+/* Sync file items */
+.sync-file-list {
+  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 12px;
+}
+
+.sync-file-item {
+  display: flex;
+  align-items: center;
+  background: #f3f4f6;
+  padding: 5px 18px 5px 12px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  font-size: 15px;
+  border-radius: 4px;
+}
+
+.sync-file-item .remove-x {
+  margin-left: 10px;
+  color: #d8000c;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 18px;
+  line-height: 1;
+}
+
+/* Sync warning */
+.sync-warning {
+  background: #fff7e6;
+  color: #d8000c;
+  padding: 8px 16px;
+  font-size: 15px;
+  line-height: 1.6;
+  margin-bottom: 10px;
+  border-radius: 4px;
+  border: 1px solid #ffebb3;
+}
+
+/* Dark theme styles */
+.theme-dark .sync-file-item,
+html.theme-dark .sync-file-item,
+body.theme-dark .sync-file-item {
+  background-color: #383f4a !important;
+  color: #e6e6e6 !important;
+  border-color: #4a4a4a !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5) !important;
+}
+
+.theme-dark .sync-file-item .remove-x,
+html.theme-dark .sync-file-item .remove-x,
+body.theme-dark .sync-file-item .remove-x {
+  color: #81fffa !important;
+}
+
+.theme-dark .sync-warning,
+html.theme-dark .sync-warning,
+body.theme-dark .sync-warning {
+  background-color: #0f0f13 !important;
+  border-color: #383f4a !important;
+  color: #81fffa !important;
+}
+
+/* Auto theme with system preference */
+@media (prefers-color-scheme: dark) {
+  .theme-auto .sync-file-item,
+  html.theme-auto .sync-file-item,
+  body.theme-auto .sync-file-item {
+    background-color: #383f4a !important;
+    color: #e6e6e6 !important;
+    border-color: #4a4a4a !important;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5) !important;
+  }
+
+  .theme-auto .sync-file-item .remove-x,
+  html.theme-auto .sync-file-item .remove-x,
+  body.theme-auto .sync-file-item .remove-x {
+    color: #81fffa !important;
+  }
+
+  .theme-auto .sync-warning,
+  html.theme-auto .sync-warning,
+  body.theme-auto .sync-warning {
+    background-color: #0f0f13 !important;
+    border-color: #383f4a !important;
+    color: #81fffa !important;
+  }
+}

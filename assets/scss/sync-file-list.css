@@ -1,0 +1,59 @@
+/* Sync file list item styles */
+.sync-file-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    min-height: 100px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.sync-file-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 10px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+.theme-dark .sync-file-item,
+html.theme-dark .sync-file-item,
+body.theme-dark .sync-file-item {
+    background-color: #2a323f;
+    color: #e6e6e6;
+}
+
+.sync-file-item .remove-x {
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 18px;
+    font-weight: bold;
+    color: #ff5252;
+    margin-left: 10px;
+}
+
+.theme-dark .sync-file-item .remove-x,
+html.theme-dark .sync-file-item .remove-x,
+body.theme-dark .sync-file-item .remove-x {
+    color: #ff7070;
+}
+
+/* Auto theme mode */
+@media (prefers-color-scheme: dark) {
+    .theme-auto .sync-file-item,
+    html.theme-auto .sync-file-item,
+    body.theme-auto .sync-file-item {
+        background-color: #2a323f;
+        color: #e6e6e6;
+    }
+
+    .theme-auto .sync-file-item .remove-x,
+    html.theme-auto .sync-file-item .remove-x,
+    body.theme-auto .sync-file-item .remove-x {
+        color: #ff7070;
+    }
+}

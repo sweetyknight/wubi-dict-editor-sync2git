@@ -1,0 +1,125 @@
+/* Form elements for dark mode */
+.theme-dark .section-content,
+html.theme-dark .section-content,
+body.theme-dark .section-content {
+  background-color: #0f0f13 !important;
+  border-color: #383f4a !important;
+}
+
+/* Form group */
+.theme-dark .form-group input,
+html.theme-dark .form-group input,
+body.theme-dark .form-group input {
+  background-color: #1c1f24 !important;
+  border-color: #383f4a !important;
+  color: #e6e6e6 !important;
+}
+
+.theme-dark .form-group input:focus,
+html.theme-dark .form-group input:focus,
+body.theme-dark .form-group input:focus {
+  border-color: #81fffa !important;
+  box-shadow: 0 0 0 2px rgba(129, 255, 250, 0.25) !important;
+}
+
+.theme-dark .form-group label,
+html.theme-dark .form-group label,
+body.theme-dark .form-group label {
+  color: #e6e6e6 !important;
+}
+
+/* Check items */
+.theme-dark .check-item,
+html.theme-dark .check-item,
+body.theme-dark .check-item {
+  color: #e6e6e6 !important;
+}
+
+.theme-dark .check-item p,
+html.theme-dark .check-item p,
+body.theme-dark .check-item p {
+  color: #e6e6e6 !important;
+}
+
+.theme-dark .check-item .label,
+html.theme-dark .check-item .label,
+body.theme-dark .check-item .label {
+  color: #e6e6e6 !important;
+}
+
+/* Section titles */
+.theme-dark .section-title h3,
+html.theme-dark .section-title h3,
+body.theme-dark .section-title h3 {
+  color: #e6e6e6 !important;
+}
+
+.theme-dark .section-title .desc,
+html.theme-dark .section-title .desc,
+body.theme-dark .section-title .desc {
+  color: #a0a0a0 !important;
+}
+
+/* Auto theme styles */
+@media (prefers-color-scheme: dark) {
+  .theme-auto .section-content,
+  html.theme-auto .section-content,
+  body.theme-auto .section-content {
+    background-color: #0f0f13 !important;
+    border-color: #383f4a !important;
+  }
+
+  /* Form group */
+  .theme-auto .form-group input,
+  html.theme-auto .form-group input,
+  body.theme-auto .form-group input {
+    background-color: #1c1f24 !important;
+    border-color: #383f4a !important;
+    color: #e6e6e6 !important;
+  }
+
+  .theme-auto .form-group input:focus,
+  html.theme-auto .form-group input:focus,
+  body.theme-auto .form-group input:focus {
+    border-color: #81fffa !important;
+    box-shadow: 0 0 0 2px rgba(129, 255, 250, 0.25) !important;
+  }
+
+  .theme-auto .form-group label,
+  html.theme-auto .form-group label,
+  body.theme-auto .form-group label {
+    color: #e6e6e6 !important;
+  }
+
+  /* Check items */
+  .theme-auto .check-item,
+  html.theme-auto .check-item,
+  body.theme-auto .check-item {
+    color: #e6e6e6 !important;
+  }
+
+  .theme-auto .check-item p,
+  html.theme-auto .check-item p,
+  body.theme-auto .check-item p {
+    color: #e6e6e6 !important;
+  }
+
+  .theme-auto .check-item .label,
+  html.theme-auto .check-item .label,
+  body.theme-auto .check-item .label {
+    color: #e6e6e6 !important;
+  }
+
+  /* Section titles */
+  .theme-auto .section-title h3,
+  html.theme-auto .section-title h3,
+  body.theme-auto .section-title h3 {
+    color: #e6e6e6 !important;
+  }
+
+  .theme-auto .section-title .desc,
+  html.theme-auto .section-title .desc,
+  body.theme-auto .section-title .desc {
+    color: #a0a0a0 !important;
+  }
+}

@@ -1,0 +1,81 @@
+/* 
+ * 更强的暗黑模式覆盖样式 
+ * 用于确保所有元素在暗黑模式下都能正确显示
+ */
+
+/* 工具面板强制暗黑背景 */
+html.theme-dark body .tool-panel,
+body.theme-dark .tool-panel,
+html.theme-dark body .container.tool-container .tool-panel,
+body.theme-dark .container.tool-container .tool-panel,
+body.theme-dark.tool .tool-panel,
+body.theme-dark.tool .container.tool-container .tool-panel {
+  background-color: #1c1f24 !important;
+  border-right-color: #383f4a !important;
+  color: #e6e6e6 !important;
+}
+
+html.theme-dark body .tool-panel .content,
+body.theme-dark .tool-panel .content,
+html.theme-dark body .container.tool-container .tool-panel .content,
+body.theme-dark .container.tool-container .tool-panel .content {
+  background-color: #0f0f13 !important;
+  color: #e6e6e6 !important;
+}
+
+/* 所有按钮强制暗黑样式 */
+html.theme-dark body .btn-primary,
+body.theme-dark .btn-primary,
+body.theme-dark .btn-blue,
+html.theme-dark body .btn-blue {
+  background: #4a5260 !important;
+  border-color: #323842 !important;
+  color: #81fffa !important;
+}
+
+html.theme-dark body .btn-primary:hover,
+body.theme-dark .btn-primary:hover,
+body.theme-dark .btn-blue:hover,
+html.theme-dark body .btn-blue:hover {
+  background: #5a6270 !important;
+  border-color: #4a5260 !important;
+}
+
+/* 自动主题模式 */
+@media (prefers-color-scheme: dark) {
+  html.theme-auto body .tool-panel,
+  body.theme-auto .tool-panel,
+  html.theme-auto body .container.tool-container .tool-panel,
+  body.theme-auto .container.tool-container .tool-panel,
+  body.theme-auto.tool .tool-panel,
+  body.theme-auto.tool .container.tool-container .tool-panel {
+    background-color: #1c1f24 !important;
+    border-right-color: #383f4a !important;
+    color: #e6e6e6 !important;
+  }
+
+  html.theme-auto body .tool-panel .content,
+  body.theme-auto .tool-panel .content,
+  html.theme-auto body .container.tool-container .tool-panel .content,
+  body.theme-auto .container.tool-container .tool-panel .content {
+    background-color: #0f0f13 !important;
+    color: #e6e6e6 !important;
+  }
+
+  html.theme-auto body .btn-primary,
+  body.theme-auto .btn-primary,
+  body.theme-auto .btn-blue,
+  html.theme-auto body .btn-blue {
+    background: #4a5260 !important;
+    border-color: #323842 !important;
+    color: #81fffa !important;
+  }
+
+  html.theme-auto body .btn-primary:hover,
+  body.theme-auto .btn-primary:hover,
+  body.theme-auto .btn-blue:hover,
+  html.theme-auto body .btn-blue:hover {
+    background: #5a6270 !important;
+    border-color: #4a5260 !important;
+  }
+}

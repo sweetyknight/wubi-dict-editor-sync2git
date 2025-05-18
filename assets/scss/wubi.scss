@@ -1,0 +1,64 @@
+@import "variables";
+@import "reset.css";
+@import "font";
+@import "utility";
+@import "normalization";
+@import "gutter";
+@import "animate";
+@import "list";
+@import "button";
+@import "searchbar";
+@import "footer";
+@import "group";
+@import "dropdown";
+@import "config";
+@import "tool";
+@import "schema-list";
+@import "app";
+@import "radio.scss";
+@import "modal";
+@import "theme";
+
+
+
+body{
+  font-size: 12px;
+  background-color: white;
+}
+
+.container{
+  position: relative;
+}
+
+.content{
+  flex-grow: 1;
+  position: relative;
+}
+
+.shadow{
+  @include box-shadow(4px 4px 15px rgba(0,0,0,0.4))
+}
+
+.hidden{
+  display: none;
+}
+
+.prototype{
+  @extend .hidden;
+}
+
+[v-cloak] {
+  display: none
+}
+
+
+.main-tool{
+  border-left: 1px solid $border-color-panel;
+  flex-shrink: 0;
+  width: 220px;
+}
+
+.backup-info{
+  font-size: $fz-small;
+  color: $text-subtitle;
+}

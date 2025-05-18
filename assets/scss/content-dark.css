@@ -1,0 +1,83 @@
+/* Content element dark theme styles */
+.theme-dark .content,
+html.theme-dark .content,
+body.theme-dark .content {
+  background-color: #1c1f24 !important;
+  color: #e6e6e6 !important;
+}
+
+/* Config section content dark styles */
+.theme-dark .section-content,
+html.theme-dark .section-content,
+body.theme-dark .section-content {
+  background-color: #1c1f24 !important;
+  color: #e6e6e6 !important;
+  border: 1px solid #383f4a !important;
+}
+
+.theme-dark .group-container,
+html.theme-dark .group-container,
+body.theme-dark .group-container {
+  background-color: #1c1f24 !important;
+  color: #e6e6e6 !important;
+}
+
+/* Schema list dark theme styles */
+.theme-dark .schema-list,
+html.theme-dark .schema-list,
+body.theme-dark .schema-list {
+  background-color: #1c1f24 !important;
+  border-right-color: #383f4a !important;
+  color: #e6e6e6 !important;
+}
+
+.theme-dark .schema-list .schema-item:hover,
+html.theme-dark .schema-list .schema-item:hover,
+body.theme-dark .schema-list .schema-item:hover {
+  background-color: #252a31 !important;
+}
+
+.theme-dark .schema-list .schema-item.active,
+html.theme-dark .schema-list .schema-item.active,
+body.theme-dark .schema-list .schema-item.active {
+  background-color: #323842 !important;
+  color: #81fffa !important;
+}
+
+/* Auto theme mode */
+@media (prefers-color-scheme: dark) {
+  .theme-auto .content,
+  html.theme-auto .content,
+  body.theme-auto .content {
+    background-color: #1c1f24 !important;
+    color: #e6e6e6 !important;
+  }
+
+  .theme-auto .group-container,
+  html.theme-auto .group-container,
+  body.theme-auto .group-container {
+    background-color: #1c1f24 !important;
+    color: #e6e6e6 !important;
+  }
+
+  .theme-auto .schema-list,
+  html.theme-auto .schema-list,
+  body.theme-auto .schema-list {
+    background-color: #1c1f24 !important;
+    border-right-color: #383f4a !important;
+    color: #e6e6e6 !important;
+  }
+
+  .theme-auto .schema-list .schema-item:hover,
+  html.theme-auto .schema-list .schema-item:hover,
+  body.theme-auto .schema-list .schema-item:hover {
+    background-color: #252a31 !important;
+  }
+
+  .theme-auto .schema-list .schema-item.active,
+  html.theme-auto .schema-list .schema-item.active,
+  body.theme-auto .schema-list .schema-item.active {
+    background-color: #323842 !important;
+    color: #81fffa !important;
+  }
+}

@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="zh-CN" :class="{'theme-dark': config && config.theme === 'black', 'theme-auto': config && config.theme === 'auto'}">
+<head>
+    <meta charset="UTF-8">
+    <title>五笔码表助手</title>    <link rel="stylesheet" href="../../assets/scss/wubi.css">
+    <link rel="stylesheet" href="../../node_modules/vue-virtual-scroller/dist/vue-virtual-scroller.css">
+    <link rel="stylesheet" href="../../assets/scss/custom-dialog.css">
+    <link rel="stylesheet" href="../../assets/scss/custom-dialog-dark.css">
+    <link rel="stylesheet" href="../../assets/scss/sync-styles.css">
+    <link rel="stylesheet" href="../../assets/scss/form-dark.css">
+    <link rel="stylesheet" href="../../assets/scss/layout-dark.css">
+    <link rel="stylesheet" href="../../assets/scss/button-dark.css">
+    <link rel="stylesheet" href="../../assets/scss/list-dark.css">    <link rel="stylesheet" href="../../assets/scss/content-dark.css">
+    <link rel="stylesheet" href="../../assets/scss/override-inline.css">
+    <link rel="stylesheet" href="../../assets/scss/dark-blue-fix.css">
+    <link rel="stylesheet" href="../../assets/scss/tool-panel-dark.css">
+    <link rel="stylesheet" href="../../assets/scss/force-dark-override.css">
+    <script>
+    // 页面加载时应用保存的主题
+    document.addEventListener('DOMContentLoaded', function() {
+        const savedTheme = localStorage.getItem('wubi-theme');
+        if (savedTheme === 'black') {
+            document.documentElement.classList.add('theme-dark');
+            document.body.classList.add('theme-dark');
+        } else if (savedTheme === 'auto') {
+            document.documentElement.classList.add('theme-auto');
+            document.body.classList.add('theme-auto');
+        }
+    });
+    </script>
+    <style>
+        html, body {
+          height: 100%;
+          margin: 0;
+          padding: 0;
+          background: #f8f8f8;
+          overflow: hidden;
+        }
+
+        .app-container {
+          display: flex;
+          flex-direction: row;
+          width: 100vw;
+          height: calc(100vh - 64px); /* 预留footer高度 */
+          overflow: hidden;
+          box-sizing: border-box;
+        }
+
+        .schema-list {
+          width: 180px;
+          min-width: 120px;
+          max-width: 220px;
+          background: #fff;
+          border-right: 1px solid #eee;
+          overflow-y: auto;
+          height: 100%;
+          box-sizing: border-box;
+        }
+
+        .content, .group-container, .main-tool, .tool-panel {
+          overflow-y: auto;
+          height: 100%;
+          min-width: 0;
+          box-sizing: border-box;
+        }
+
+        .content, .group-container {
+          flex: 1 1 0;
+          background: #fff;
+        }
+
+        .main-tool {
+          width: 220px;
+          /* min-width: 180px; */
+          max-width: 220px;
+          background: #fafbfc;
+          border-left: 1px solid #eee;
+          box-shadow: -2px 0 8px rgba(0,0,0,0.03);
+        }
+
+        .search-bar {
+          width: 100vw;
+          min-width: 0;
+          margin: 0 0 12px 0;
+          padding: 0 24px 8px 24px;
+          box-sizing: border-box;
+          background: #fff;
+          border-radius: 8px;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+          position: relative;
+          z-index: 2;
+          transition: width 0.2s;
+        }
+
+        .footer {
+          position: fixed;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          z-index: 100;
+          background: #fff;
+          box-shadow: 0 -2px 8px rgba(0,0,0,0.04);
+        }
+
+        @media (max-width: 1200px) {
+          .main-tool { width: 220px; min-width: 120px; }
+          .search-bar { padding: 0 8px 8px 8px; }
+        }
+        @media (max-width: 900px) {
+          .app-container { flex-direction: column; height: auto; min-height: 0; }
+          .main-tool, .schema-list { width: 100vw; max-width: 100vw; min-width: 0; }
+          .main-tool { border-left: none; border-top: 1px solid #eee; box-shadow: none; }
+          .content, .group-container { min-width: 0; }
+        }
+        @media (max-width: 600px) {
+          .app-container { padding-bottom: 80px; }
+          .search-bar { padding: 0 2vw 8px 2vw; }
+        }
+    </style>
+</head>
+<body class="index" :class="{'theme-dark': config && config.theme === 'black', 'theme-auto': config && config.theme === 'auto'}">
+
+<div v-cloak id="app">
+    <!-- 重要提示 -->
+    <div class="sync-warning">
+        <div>⚠️每次使用前请先点击 <span style='color:#ffb300;font-weight:600;'>“下载到本地”</span> 按钮，关闭前请先点击 <span style='color:#2db67c;font-weight:600;'>“上传至Git”</span> 按钮，保持与远程仓库词库同步。<br> </div>
+    </div>
+    <!-- 自定义弹窗提示 -->
+    <div v-if="showDialog" class="custom-dialog-mask">
+        <div class="custom-dialog">
+            <div class="custom-dialog-content">{{ dialogMsg }}</div>
+        </div>
+    </div>
+
+    <!--词条编辑窗口-->
+    <div class="edit-modal modal" v-if="wordEditing">
+        <div class="modal-panel">
+            <div class="modal-close" @click="wordEditing = null"><img src="../../assets/img/delete_white.svg" alt="close"></div>
+            <div class="modal-header">
+                <div class="id">{{wordEditing.id}}</div>
+            </div>
+            <div class="modal-body">
+                <div class="input-item">
+                    <label for="word">词条</label>
+                    <input ref="editInputWord" id="word" type="text" v-model="wordEditing.word" >
+                </div>
+                <div class="input-item mt-1">
+                    <label for="code">编码</label>
+                    <input ref="editInputCode" id="code" type="text" v-model="wordEditing.code" >
+                </div>
+                <div class="input-item mt-1">
+                    <label for="priority">权重</label>
+                    <input ref="editInputPriority" id="priority" type="text" v-model="wordEditing.priority" >
+                </div>
+                <div class="input-item mt-1">
+                    <label for="note">备注</label>
+                    <input ref="editInputNote" id="note" type="text" v-model="wordEditing.note" >
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="btn btn-cyan " @click="generateCodeForWordEdit">生成编码</div>
+                <div class="btn btn-roseo ml-2" @click="confirmEditWord">确定</div>
+            </div>
+        </div>
+    </div>
+
+    <!--搜索框-->
+    <div class="search-bar" v-if="dict">
+        <div class="btn btn-primary" @click="applyRime" style="background:#2db67c;border:none;">部署</div>
+        <div class="btn btn-primary" @click="reloadCurrentDict" style="background:#2db67c;border:none;">刷新</div>
+        <div
+            :class="[
+                'btn',
+                {'btn-green': labelOfSaveBtn === '保存成功'},
+                {'btn-primary': labelOfSaveBtn !== '保存成功'} ]"
+            ref="domBtnSave"
+            @click="saveToFile(dict)"
+            :style="labelOfSaveBtn !== '保存成功' ? 'background:#2db67c;border:none;' : ''"
+        >{{ labelOfSaveBtn }}
+        </div>
+        <div class="dropdown">
+            <div class="dropdown-link btn btn-orange"
+                 v-show="chosenWordIdArray.length > 0"
+                 @click.capture="toggleFileListDropDown()">移动到...            </div>
+            <div class="dropdown-body" v-show="isShowDropdown">
+                <div class="file-list shadow" v-if="dropdownFileList.length > 0">
+                    <div :class="['file-list-item', {active: fileIndex === dropdownActiveFileIndex}]"
+                         @click="setDropdownActiveIndex(fileIndex)"
+                         v-for="(file, fileIndex) in dropdownFileList"
+                         :key="fileIndex">
+                        <div>{{ file.name }}</div>
+                    </div>
+                </div>
+                <div class="file-list shadow" v-if="targetDict.isGroupMode">
+                    <div :class="['file-list-item', {active: index === dropdownActiveGroupIndex}]"
+                         v-if="targetDict.isGroupMode"
+                         @click="setDropdownActiveGroupIndex(index)"
+                         v-for="(group, index) in targetDict.wordsOrigin"
+                         :key="index">
+                        <div>{{ group.groupName }}</div>
+                    </div>
+                </div>
+                <div class="btn btn-orange shadow ml-1"
+                     @click="moveWordsToTargetDict"
+                     v-if="targetDict.isGroupMode && dropdownActiveGroupIndex !== -1 || !targetDict.isGroupMode && dropdownActiveFileIndex !== -1"
+                >确定</div>
+            </div>
+        </div>
+        <div class="input-item">
+            <input class="word" ref="domInputWord"
+                   @focus="isSearchbarFocused = true"
+                   @focusout="isSearchbarFocused = false"
+                   @keyup.enter="enterKeyPressed"
+                   v-model="word" type="text" placeholder="*词条">
+            <div @click="word = ''" v-show="word" class="btn-clear">
+                <img src="../../assets/img/delete_white.svg" alt="clear">
+            </div>
+
+            <div class="word-redundancy-list" v-if="wordsRedundancy.length > 0 && isSearchbarFocused">
+                <div class="word-redundancy-list-item" v-for="word in wordsRedundancy" :key="word.id">
+                    <div class="word">{{ word.word }}</div>
+                    <div class="code">{{ word.code }}</div>
+                    <div class="origin" v-if="word.origin === '当前码表'">{{ word.origin }}</div>
+                    <div class="origin blue" v-else>{{ word.origin }}</div>
+                    <div class="code">权重：{{ word.priority }}</div>
+                    <div class="code">{{ word.note }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="input-item">
+            <input class="code" ref="domInputCode"
+                   @focus="isSearchbarFocused = true"
+                   @focusout="isSearchbarFocused = false"
+                   @keyup.enter="enterKeyPressed"
+                   v-model="code" type="text" placeholder="*编码">
+            <div @click="code = ''" v-show="code" class="btn-clear">
+                <img src="../../assets/img/delete_white.svg" alt="clear">
+            </div>
+        </div>
+        <div class="input-item">
+            <input class="priority" ref="domInputPriority" @keyup.enter="enterKeyPressed" v-model="priority" type="text" placeholder="权重">
+            <div @click="priority = ''" v-show="priority" class="btn-clear">
+                <img src="../../assets/img/delete_white.svg" alt="clear">
+            </div>
+        </div>
+        <div class="input-item">
+            <input class="note" ref="domInputNote" @keyup.enter="enterKeyPressed" v-model="note" type="text" placeholder="备注">
+            <div @click="note = ''" v-show="note" class="btn-clear">
+                <img src="../../assets/img/delete_white.svg" alt="clear">
+            </div>
+        </div>
+
+        <div class="btn btn-primary" @click="addNewWord">添加</div>
+        <div class="btn btn-primary" @click="search">搜索</div>
+
+
+        <div class="btn btn-roseo" v-show="chosenWordIdArray.length > 0" @click="deleteWords">删除</div>
+        <p class="notice">显示格式：<b>编码</b> - 词条 - 权重 - 备注 - id</p>
+
+        <template v-if="IS_IN_DEVELOP">
+
+        </template>
+    </div>
+
+    <div class="app-container">
+        <!--文件目录列表-->
+        <div class="schema-list" :style="`height: ${heightContent}px`">
+            <div @click="switchToFile(file)"
+                 :class="['schema-list-item',  {active: dict.fileName === file.path}]"
+                 v-for="file in dropdownFileList" :key="file.path">{{file.name}}</div>
+        </div>
+        <!-- 普通模式列表 -->
+        <div ref="container"
+             v-if="!dict.isGroupMode"
+             :style="`height: ${heightContent}px`"
+             class="content">
+            <div class="list-container">
+                <div class="group">
+                    <recycle-scroller
+                        :buffer="1000"
+                        :prerender="200"
+                        :style="`height: ${heightContent}px`"
+                        v-if="words.length > 0"
+                        :min-item-size="24"
+                        class="virtual-list"
+                        :items="words">
+                        <template v-slot="{ item, index }">
+                            <div class="word-item" @click="select(index, item.id, $event)">
+                                <div class="checkbox-cell">
+                                    <!--                                <div :class="['checkbox-item', {active: chosenWordIdArray.some(i => i === item.id)}]"></div>-->
+                                    <div :class="['checkbox-item', {active: chosenWordIds.has(item.id)}]"></div>
+                                </div>
+                                <div title="编码" class="code">{{ item.code }}</div>
+                                <div :title="item.word" class="word">{{ item.word }}</div>
+                                <div title="权重" class="priority">{{ item.priority }}</div>
+                                <div title="备注" class="note">{{ item.note }}</div>
+                                <div title="标识" class="indicator">{{ item.indicator }}</div>
+                                <div v-if="IS_IN_DEVELOP" class="id">{{ index + 1 }}</div>
+                                <div class="id">{{ item.id }}</div>
+                                <div class="operation">
+
+                                    <div v-if="config.theme === 'black'" class="up" @click.stop="moveUp(item.id)" title="上移">
+                                        <img src="../../assets/img/up_white.svg" alt="上移"></div>
+                                    <div v-else class="up" @click.stop="moveUp(item.id)" title="上移">
+                                        <img src="../../assets/img/up.svg" alt="上移"></div>
+                                    <div v-if="config.theme === 'black'" class="down" @click.stop="moveDown(item.id)" title="下移">
+                                        <img src="../../assets/img/down_white.svg" alt="下移"></div>
+                                    <div v-else class="down" @click.stop="moveDown(item.id)" title="下移">
+                                        <img src="../../assets/img/down.svg" alt="下移"></div>
+
+                                    <!--保留权重调换位置-->
+                                    <div v-if="config.theme === 'black'" class="up"
+                                         @click.stop="moveUp(item.id, true)" title="调换权重上移">
+                                        <img src="../../assets/img/up_white.svg" alt="调换权重上移">
+                                    </div>
+                                    <div v-else class="up" @click.stop="moveUp(item.id, true)" title="调换权重上移">
+                                        <img src="../../assets/img/up_alt.svg" alt="调换权重上移">
+                                    </div>
+                                    <div v-if="config.theme === 'black'" class="down"
+                                         @click.stop="moveDown(item.id, true)" title="调换权重下移">
+                                        <img src="../../assets/img/down_white.svg" alt="调换权重下移">
+                                    </div>
+                                    <div v-else class="down" @click.stop="moveDown(item.id, true)" title="调换权重下移">
+                                        <img src="../../assets/img/down_alt.svg" alt="调换权重下移">
+                                    </div>
+
+                                    <div v-if="config.theme === 'black'" class="up" @click.stop="editWord(item)">
+                                        <img src="../../assets/img/edit_white.svg" alt="edit"></div>
+                                    <div v-else class="up" @click.stop="editWord(item)">
+                                        <img src="../../assets/img/edit.svg" alt="edit"></div>
+                                    <div v-if="config.theme === 'black'" class="down" @click.stop="deleteWord(item.id)">
+                                        <img src="../../assets/img/delete_white.svg" alt="delete"></div>
+                                    <div v-else class="down" @click.stop="deleteWord(item.id)">
+                                        <img src="../../assets/img/delete.svg" alt="delete"></div>
+                                </div>
+                            </div>
+                        </template>
+                    </recycle-scroller>
+                </div>
+            </div>
+        </div>
+
+        <!-- 分组模式列表 -->
+        <div v-else
+             :style="`height: ${heightContent}px`"
+             class="content">
+            <div class="group-container"
+                 :style="`height: ${heightContent}px`">
+
+                <!--分组目录-->
+                <div class="catalog-list"
+                     :style="`height: ${heightContent}px`">
+                    <div :class="['catalog-item', {active: -1 === activeGroupId}]"
+                         @click="setGroupId(-1)">
+                        <div class="catalog-title">全部</div>
+                    </div>
+                    <div :class="['catalog-item', {active: groupIndex === activeGroupId}]"
+                         @click.stop="setGroupId(groupIndex)"
+                         v-for="(group, groupIndex) in dict.wordsOrigin"
+                         :key="groupIndex">
+                        <div v-if="config && config.theme === 'black'" class="up"
+                             @click.stop="catalogMove(group.id, 'up')">
+                            <img src="../../assets/img/up_white.svg" alt="move up"></div>
+                        <div v-else class="up" @click.stop="catalogMove(group.id, 'up')">
+                            <img src="../../assets/img/up.svg" alt="move up"></div>
+
+                        <div class="catalog-title">{{group.groupName || '- 未命名 -'}}</div>
+
+                        <div v-if="config && config.theme === 'black'" class="down"
+                             @click.stop="catalogMove(group.id, 'down')">
+                            <img src="../../assets/img/down_white.svg" alt="move down"></div>
+                        <div v-else class="down" @click.stop="catalogMove(group.id, 'down')">
+                            <img src="../../assets/img/down.svg" alt="move down"></div>
+                    </div>
+                </div>
+
+                <!-- 分组词条组列表-->
+                <div class="group-list"
+                     :style="`height: ${heightContent}px`">
+                    <div class="group" v-for="(group, groupIndex) in words" :key="groupIndex">
+                        <!--- GROUP HEADER -->
+                        <div class="group-header"
+                             @click.right="group.isEditingTitle = !group.isEditingTitle">
+                            <template v-if="group.isEditingTitle">
+                                <input :key="groupIndex"
+                                       v-model="group.groupName"
+                                       @keydown.enter="group.isEditingTitle = false" />
+                                <div class="operation">
+                                    <div class="btn btn-sm btn-alt-primary"
+                                         @click="group.isEditingTitle = false">保存</div>
+                                </div>
+                            </template>
+                            <template v-else>
+                                <h3 :key="groupIndex"
+                                >{{ group.groupName }}</h3>
+                                <div class="operation" >
+                                    <div class="btn btn-sm btn-alt-primary"
+                                         @click="group.isEditingTitle = true">编辑</div>
+                                    <div v-if="activeGroupId === -1" class="btn btn-sm btn-alt-primary"
+                                         @click="addGroupBeforeId(groupIndex)">添加分组</div>
+                                    <div class="btn btn-sm btn-alt-roseo"
+                                         @click="deleteGroup(group.id)">删除</div>
+                                </div>
+                            </template>
+                            <!--                        <p class="tip" v-if="activeGroupId === groupIndex">+  新词将添加到该分组</p>-->
+                        </div>
+
+                        <div class="word-list">
+                            <div class="word-item"
+                                 @click="select(index, item.id, $event)"
+                                 v-for="(item, index) in group.dict"
+                                 :key="item.id">
+                                <div class="checkbox-cell">
+                                    <!--                                <div :class="['checkbox-item', {active: chosenWordIdArray.some(i => i === item.id)}]"></div>-->
+                                    <div :class="['checkbox-item', {active: chosenWordIds.has(item.id)}]"></div>
+                                </div>
+                                <div title="编码" class="code">{{ item.code }}</div>
+                                <div :title="item.word" class="word">{{ item.word }}</div>
+                                <div title="权重" class="priority">{{ item.priority }}</div>
+                                <div title="备注" class="note">{{ item.note }}</div>
+                                <div title="标识" class="indicator">{{ item.indicator }}</div>
+                                <div v-if="IS_IN_DEVELOP" class="id">{{ index + 1 }}</div>
+                                <div class="id">{{ item.id }}</div>
+                                <div class="operation">
+                                <!-- 不要去隐藏头部的上移按钮，会使按钮位置错位-->
+
+                                <!--普通调换位置-->
+                                    <div v-if="config.theme === 'black'" class="up" @click.stop="moveUp(item.id)" title="上移">
+                                        <img src="../../assets/img/up_white.svg" alt="上移" >
+                                    </div>
+                                    <div v-else class="up" @click.stop="moveUp(item.id)" title="上移">
+                                        <img src="../../assets/img/up.svg" alt="上移" >
+                                    </div>
+                                    <div v-if="config.theme === 'black'" class="down" @click.stop="moveDown(item.id)" title="下移">
+                                        <img src="../../assets/img/down_white.svg" alt="下移" >
+                                    </div>
+                                    <div v-else class="down" @click.stop="moveDown(item.id)" title="下移">
+                                        <img src="../../assets/img/down.svg" alt="下移" >
+                                    </div>
+
+                                <!--保留权重调换位置-->
+                                    <div v-if="config.theme === 'black'" class="up" @click.stop="moveUp(item.id, true)" title="调换权重上移">
+                                        <img src="../../assets/img/up_white.svg" alt="调换权重上移" >
+                                    </div>
+                                    <div v-else class="up" @click.stop="moveUp(item.id, true)" title="调换权重上移">
+                                        <img src="../../assets/img/up_alt.svg" alt="调换权重上移" >
+                                    </div>
+                                    <div v-if="config.theme === 'black'" class="down" @click.stop="moveDown(item.id, true)" title="调换权重下移">
+                                        <img src="../../assets/img/down_white.svg" alt="调换权重下移" >
+                                    </div>
+                                    <div v-else class="down" @click.stop="moveDown(item.id, true)" title="调换权重下移">
+                                        <img src="../../assets/img/down_alt.svg" alt="调换权重下移" >
+                                    </div>
+
+
+                                    <div v-if="config.theme === 'black'" class="up" @click.stop="editWord(item)" title="编辑">
+                                        <img src="../../assets/img/edit_white.svg" alt="编辑" >
+                                    </div>
+                                    <div v-else class="up" @click.stop="editWord(item)" title="编辑">
+                                        <img src="../../assets/img/edit.svg" alt="编辑" >
+                                    </div>
+                                    <div v-if="config.theme === 'black'" class="down" @click.stop="deleteWord(item.id)" title="删除">
+                                        <img src="../../assets/img/delete_white.svg" alt="删除" >
+                                    </div>
+                                    <div v-else class="down" @click.stop="deleteWord(item.id)" title="删除">
+                                        <img src="../../assets/img/delete.svg" alt="删除" >
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-tool" v-show="config.isToolPanelShowing">
+            <div class="tool-panel"
+                 :style="`height: ${heightContent}px`">
+
+                <section>
+                    <div class="title">同步</div>
+                    <div class="content">
+                        <div class="btn-list">
+                            <div class="btn-item">
+                                <div class="btn btn-primary" @click="uploadToGit">上传至Git</div>
+                            </div>
+                            <div class="btn-item" >
+                                <div class="btn btn-primary" @click="downloadFromGit">下载到本地</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                
+                <section>
+                    <div class="title">选择</div>
+                    <div class="content">
+                        <div class="btn-list">
+                            <div class="btn-item">
+                                <div class="btn btn-green" @click="selectAll">全选</div>
+                            </div>
+                            <div class="btn-item" v-if="chosenWordIds.size > 0">
+                                <div class="btn btn-orange" @click="resetInputs">清选</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <div class="title">词条查重 - 全部</div>
+                    <div class="content">
+                        <div class="btn-list">
+                            <div class="btn-item">
+                                <div class="btn btn-primary" @click="checkRepetition(true, true)">单字</div>
+                            </div>
+                            <div class="btn-item">
+                                <div class="btn btn-primary" @click="checkRepetition(false, true)">词组</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section>
+                    <div class="title">词条查重 - 多余部分</div>
+                    <div class="content">
+                        <div class="btn-list">
+                            <div class="btn-item">
+                                <div class="btn btn-primary" @click="checkRepetition(true, false)">单字</div>
+                            </div>
+                            <div class="btn-item">
+                                <div class="btn btn-primary" @click="checkRepetition(false, false)">词组</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section>
+                    <div class="title">编码查重 - 与单字重码的词条</div>
+                    <div class="content">
+                        <div class="btn-list">
+                            <div class="btn-item">
+                                <div class="btn btn-primary" @click="checkRepeatedWordWithSameCode()">查重</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <div class="title">查错</div>
+                    <div class="content">
+
+                        <div class="btn-list">
+                            <div class="btn-item">
+                                <div class="btn btn-primary" @click="getErrorWords">词组查错</div>
+                            </div>
+                            <div class="btn-item">
+                                <div class="btn btn-primary" @click="getErrorWordsSingle">单字查错</div>
+                            </div>
+                        </div>
+                        <div class="btn-list">
+                            <div class="btn-item">
+                                <div class="btn btn-primary" @click="correctErrorWords">纠正选中词条编码</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section>
+                    <div class="title">码表操作</div>
+                    <div class="content">
+                        <div class="btn-list">
+                            <div class="btn-item">
+                                <div class="btn btn-primary" @click="reloadCurrentDict">重载码表</div>
+                            </div>
+                            <div class="btn-item">
+                                <div class="btn btn-primary" @click="sort">排序词条</div>
+                            </div>
+                            <div class="btn-item">
+                                <div class="btn btn-primary" @click="addPriority">添加通用权重</div>
+                            </div>
+                            <div class="btn-item mt-1">
+                                <div class="btn btn-primary" @click="openCurrentYaml">编辑源码表文件</div>
+                            </div>                            <div class="btn-item mt-1">
+                                <div class="btn btn-primary" @click="generateSqlFile">生成 sql 文件</div>
+                            </div>
+                            <div class="btn-item mt-1">
+                                <div class="btn btn-orange" @click="exportSelectionToPlist">导出选中词条到 .plist 文件</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </div>
+    </div>
+
+    <!--FOOTER-->
+    <div class="footer">
+        <div class="footer-left">
+            <div class="info-list">
+                <div class="count">总<span class="number">{{dict.countDictOrigin}}</span></div>
+                <div class="count"
+                     v-if="dict.countDictOrigin !== dict.countDict">显<span class="number">{{wordsCount}}</span></div>
+                <div class="count">选<span class="number">{{chosenWordIds.size}}</span></div>
+            </div>
+            <div class="link-list">
+                <div class="link origin"
+                     :class="{'hide-on-tool': config.isToolPanelShowing}"
+                     @click="openCurrentYaml">{{ dict.fileName }}</div>
+            </div>
+        </div>
+
+        <div class="footer-right">
+            <div class="tip">{{tips.join(' , ')}}</div>
+            <div class="footer-icon" title="关闭工具面板" v-if="config.isToolPanelShowing" @click="toolPanelClose">
+                <img src="../../assets/img/tool_panel_close.png"></div>
+            <div class="footer-icon" title="开启工具面板"  v-else @click="toolPanelExpand">
+                <img src="../../assets/img/tool_panel_open.png"></div>
+        </div>
+    </div>
+</div>
+
+<script src="App.js"></script>
+</body>
+</html>
