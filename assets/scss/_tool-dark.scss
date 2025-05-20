@@ -1,0 +1,51 @@
+/**
+ * 专门为工具页面的暗黑模式样式
+ */
+
+/* 只影响 tool.html */
+.tool.theme-dark .tool-panel {
+  background-color: #1c1f24 !important;
+}
+.tool.theme-dark .tool-panel .content {
+  background-color: #0f0f13 !important;
+}
+.tool.theme-dark .tool-panel section .title {
+  color: #e6e6e6 !important;
+}
+.tool.theme-dark .tool-panel section .title.green {
+  color: #4CD964 !important;
+}
+.tool.theme-dark .tool-panel section .title.roseo {
+  color: #FF2D70 !important;
+}
+.tool.theme-dark .tool-panel section .title.blue {
+  color: #81fffa !important;
+}
+.tool.theme-dark .tool-panel .tip {
+  color: #e6e6e6 !important;
+}
+
+/* 自动主题模式 */
+@media (prefers-color-scheme: dark) {
+  .tool.theme-auto .tool-panel {
+    background-color: #1c1f24 !important;
+  }
+  .tool.theme-auto .tool-panel .content {
+    background-color: #0f0f13 !important;
+  }
+  .tool.theme-auto .tool-panel section .title {
+    color: #e6e6e6 !important;
+  }
+  .tool.theme-auto .tool-panel section .title.green {
+    color: #4CD964 !important;
+  }
+  .tool.theme-auto .tool-panel section .title.roseo {
+    color: #FF2D70 !important;
+  }
+  .tool.theme-auto .tool-panel section .title.blue {
+    color: #81fffa !important;
+  }
+  .tool.theme-auto .tool-panel .tip {
+    color: #e6e6e6 !important;
+  }
+}

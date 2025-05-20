@@ -23,7 +23,7 @@ hr{
 .tool-panel{
   overflow-y: auto;
   margin-top: 1px;
-  background-color: $bg-panel-tool;
+  background-color: $bg-panel-tool; // 浅色背景
   padding: 10px 15px 15px;
   &::-webkit-scrollbar {
     width: 3px;
@@ -66,6 +66,10 @@ hr{
   }
 }
 
+// tool.html专用，light模式下tool-panel为白色
+.tool:not(.theme-dark):not(.theme-auto) .tool-panel {
+  background: #fff !important;
+}
 
 .load-list{
   align-items: center;

@@ -40,9 +40,9 @@ $black-color-main: #81fffa;
     border-bottom-color: $black-color-border;
   }
   
-  // 修复sync-warning类的背景色
-  html.theme-dark body .sync-warning,
-  body.theme-dark .sync-warning {
+  // 修复sync-warning类的背景色（仅tool页面生效）
+  .tool.theme-dark body .sync-warning,
+  .tool.theme-dark .sync-warning {
     background-color: $black-body-bg !important;
     border-color: lighten($black-color-border-highlight, 10%) !important;
     color: $black-color-main !important;
@@ -64,8 +64,8 @@ $black-color-main: #81fffa;
   }
   
   // 修复sync-file-item类的背景色
-  html.theme-dark body .sync-file-item,
-  body.theme-dark .sync-file-item {
+  .tool.theme-dark body .sync-file-item,
+  .tool.theme-dark .sync-file-item {
     background-color: $black-bg-highlight !important;
     color: $black-color-text !important;
     border-color: $black-color-border !important;
@@ -83,8 +83,8 @@ $black-color-main: #81fffa;
   }
   
   // 修复rename-file-list区域的对比度
-  html.theme-dark body .rename-file-list,
-  body.theme-dark .rename-file-list {
+  .tool.theme-dark body .rename-file-list,
+  .tool.theme-dark .rename-file-list {
     .rename-file-list-item {
       input {
         background-color: $black-bg-highlight !important;
@@ -500,13 +500,12 @@ $black-color-main: #81fffa;
   }
 
 
-
-
   /*TOOL*/
-  .tool{
+  .tool-container, .tool{
+    background-color: $black-bg;
     .tool-panel{
       border-right-color: $black-color-border;
-      background-color: $black-bg;
+      background-color: $black-bg !important;
       .title{
         color: $black-color-text;
       }
@@ -540,6 +539,74 @@ $black-color-main: #81fffa;
   }
 }
 
+// 美化 sync-warning（所有页面通用，tool页面dark样式由tool-dark控制）
+.sync-warning {
+  margin: 0px auto 0px auto;
+  padding: 12px 18px;
+  border-radius: 8px;
+  font-size: 15px;
+  line-height: 1.7;
+  background: #fffbe6;
+  color: #b26a00;
+  box-shadow: 0 2px 8px rgba(255, 200, 0, 0.08);
+  text-align: left;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 500;
+}
+
+body.theme-dark .sync-warning {
+  background: #23232b !important;
+  color: #ffe082 !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+  border: 1px solid #333;
+}
+
+// 美化 sync-file-list（config.html专用）
+.sync-file-list {
+  margin: 0px 0 0px 0;
+  padding: 10px 0;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  font-size: 14px;
+  overflow: hidden;
+}
+body.theme-dark .sync-file-list {
+  background: #23232b !important;
+  color: #e6e6e6 !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+}
+.sync-file-list .sync-file-item {
+  padding: 8px 18px;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background 0.2s;
+}
+body.theme-dark .sync-file-list .sync-file-item {
+  border-bottom: 1px solid #333;
+}
+.sync-file-list .sync-file-item:last-child {
+  border-bottom: none;
+}
+.sync-file-list .sync-file-item:hover {
+  background: #fffbe6;
+}
+body.theme-dark .sync-file-list .sync-file-item:hover {
+  background: #353535;
+}
+
+// 修复index.html中.tool-panel顶部白色问题（只在index页面强制浅色）
+body.index .tool-panel {
+  background: #fafbfc !important;
+  border-top: none !important;
+}
+body.theme-dark.index .tool-panel {
+  background: #23232b !important;
+  border-top: none !important;
+}
+
 .theme-dark,
 html.theme-dark,
 body.theme-dark,
@@ -554,5 +621,132 @@ html.theme-auto body {
   @media (prefers-color-scheme: dark) {
     @include dark-mode();
   }
+}
+
+// 3. config.html remove-x美化
+.remove-x {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 8px;
+  font-size: 18px;
+  color: #ff2d70;
+  cursor: pointer;
+  transition: color 0.15s, transform 0.1s, box-shadow 0.1s;
+  user-select: none;
+  vertical-align: middle;
+}
+.remove-x:hover {
+  color: #fff;
+  background: #ff2d70;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(255,45,112,0.12);
+  transform: scale(1.15);
+}
+.remove-x:active {
+  color: #fff;
+  background: #b71c3a;
+  transform: scale(0.95);
+}
+
+// 3. remove-x title对齐
+.sync-file-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+// 4. rename-file-list美化
+.rename-file-list {
+  margin: 3px 0 3px 0;
+  padding: 0px 0;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  font-size: 14px;
+  overflow: hidden;
+}
+body.theme-dark .rename-file-list {
+  background: #23232b !important;
+  color: #e6e6e6 !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+}
+.rename-file-list-item {
+  display: flex;
+  align-items: center;
+  gap: 0px;
+  padding: 0px 0px;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background 0.2s;
+}
+body.theme-dark .rename-file-list-item {
+  border-bottom: 1px solid #333;
+}
+.rename-file-list-item:last-child {
+  border-bottom: none;
+}
+.rename-file-list-item:hover {
+  background: #fffbe6;
+}
+body.theme-dark .rename-file-list-item:hover {
+  background: #353535;
+}
+.rename-file-list-item input {
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: 180px; // 提高最大宽度，便于显示
+  border-radius: 4px;
+  border: 1px solid #eee;
+  padding: 4px 8px;
+  font-size: 14px;
+  background: #fafbfc;
+  color: #333;
+  transition: border 0.2s, box-shadow 0.2s;
+  margin-left: 4px; // 缩小间距
+  box-sizing: border-box;
+}
+body.theme-dark .rename-file-list-item input {
+  background: #23232b;
+  color: #e6e6e6;
+  border: 1px solid #444;
+}
+.rename-file-list-item input:focus {
+  border: 1.5px solid #ff2d70;
+  box-shadow: 0 0 0 2px rgba(255,45,112,0.08);
+}
+.rename-file-list-item .filepath {
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: 320px; // 提高最大宽度
+  margin-right: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #888;
+}
+body.theme-dark .rename-file-list-item .filepath {
+  color: #aaa;
+}
+.rename-file-list-item .remove-x {
+  margin-left: 8px;
+}
+
+// 2. sync-warning 文字靠左
+.sync-warning {
+  justify-content: flex-start;
+}
+
+// 3. 彻查 main-tool 顶部白色细条
+body.index .main-tool,
+body.theme-dark.index .main-tool,
+.main-tool,
+body.theme-dark .main-tool,
+body.theme-dark .main-tool:before,
+body.theme-dark .main-tool:after {
+  border-top: none !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  outline: none !important;
 }
 

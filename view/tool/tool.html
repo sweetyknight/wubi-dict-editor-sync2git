@@ -2,16 +2,23 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">    <title>码表处理工具</title>    <link rel="stylesheet" href="../../assets/scss/wubi.css">
-    <link rel="stylesheet" href="../../node_modules/vue-virtual-scroller/dist/vue-virtual-scroller.css"><script>
-    // 页面加载时应用保存的主题
+    <link rel="stylesheet" href="../../node_modules/vue-virtual-scroller/dist/vue-virtual-scroller.css"><script>    // 页面加载时应用保存的主题
     document.addEventListener('DOMContentLoaded', function() {
         const savedTheme = localStorage.getItem('wubi-theme');
         if (savedTheme === 'black') {
             document.documentElement.classList.add('theme-dark');
             document.body.classList.add('theme-dark');
+            // 确保tool类的元素上也有theme-dark类
+            document.querySelectorAll('.tool').forEach(function(elem) {
+                elem.classList.add('theme-dark');
+            });
         } else if (savedTheme === 'auto') {
             document.documentElement.classList.add('theme-auto');
             document.body.classList.add('theme-auto');
+            // 确保tool类的元素上也有theme-auto类
+            document.querySelectorAll('.tool').forEach(function(elem) {
+                elem.classList.add('theme-auto');
+            });
         }
         
         // 强化暗黑模式下按钮选中效果
@@ -27,8 +34,47 @@
                     btn.style.transform = 'scale(1.08)';
                     btn.style.fontWeight = 'bold';
                 });
+                
+                // 确保工具面板背景色是暗黑模式
+                document.querySelectorAll('.tool-panel').forEach(function(panel) {
+                    panel.style.backgroundColor = '#1c1f24';
+                });
             }, 100);
         }
+        
+        // 监听主题变更事件
+        const { ipcRenderer } = require('electron');
+        ipcRenderer.on('theme-changed', function(event, theme) {
+            // 移除所有主题类
+            document.documentElement.classList.remove('theme-dark', 'theme-auto');
+            document.body.classList.remove('theme-dark', 'theme-auto');
+            document.querySelectorAll('.tool').forEach(function(elem) {
+                elem.classList.remove('theme-dark', 'theme-auto');
+            });
+            
+            // 应用新主题
+            if (theme === 'black') {
+                document.documentElement.classList.add('theme-dark');
+                document.body.classList.add('theme-dark');
+                document.querySelectorAll('.tool').forEach(function(elem) {
+                    elem.classList.add('theme-dark');
+                });
+                
+                // 确保工具面板背景色是暗黑模式
+                document.querySelectorAll('.tool-panel').forEach(function(panel) {
+                    panel.style.backgroundColor = '#1c1f24';
+                });
+            } else if (theme === 'auto') {
+                document.documentElement.classList.add('theme-auto');
+                document.body.classList.add('theme-auto');
+                document.querySelectorAll('.tool').forEach(function(elem) {
+                    elem.classList.add('theme-auto');
+                });
+            }
+            
+            // 保存主题到本地存储
+            localStorage.setItem('wubi-theme', theme);
+        });
     });
     </script>
 </head>

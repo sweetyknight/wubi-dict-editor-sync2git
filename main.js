@@ -40,16 +40,59 @@ let fileList = [] // 文件目录列表，用于存放词库文件信息
 function createMainWindow() {
     let width = IS_IN_DEVELOP ? 1800 : 1250
     let height = 800
-    mainWindow = new BrowserWindow({ // 创建新的主窗口
+    
+    // 检查存储的主题设置
+    const { session } = require('electron');
+    const fs = require('fs');
+    const path = require('path');
+    const userDataPath = app.getPath('userData');
+    let themeSource = 'system';  // 默认使用系统主题
+    
+    // 尝试从配置文件读取主题设置
+    try {
+        const config = readConfigFile();
+        if (config && config.theme) {
+            if (config.theme === 'black') {
+                themeSource = 'dark';
+            } else if (config.theme === 'white') {
+                themeSource = 'light';
+            } else if (config.theme === 'auto') {
+                themeSource = 'system';
+            }
+        }
+    } catch (e) {
+        console.error('读取主题配置失败', e);
+    }
+    
+    // 设置电子应用的原生主题
+    const nativeTheme = require('electron').nativeTheme;
+    nativeTheme.themeSource = themeSource;
+    
+    // 设置窗口背景色，在暗色主题中更好看
+    const backgroundColor = themeSource === 'dark' ? '#1c1f24' : '#ffffff';    // 创建窗口配置 - 使用简化版，确保菜单栏可见
+    const windowOptions = {
         width,
         height,
         icon: __dirname + '/assets/appIcon/appicon.ico', // windows icon
         // icon: __dirname + '/assets/appIcon/linux.png', // linux icon
+        backgroundColor: backgroundColor, // 设置窗口背景色
         webPreferences: {
             nodeIntegration: true, // 开启 node.js 集成
             contextIsolation: false // 关闭上下文隔离
         }
-    })
+    };
+    
+    // 原生黑暗模式，通过nativeTheme设置，不修改窗口样式
+    if (process.platform === 'win32' && themeSource === 'dark') {
+        console.log('正在使用暗色主题，但不修改标题栏样式以保证兼容性');
+    }    // 创建主窗口
+    mainWindow = new BrowserWindow(windowOptions)
+    
+    // 如果是暗色主题，为窗口添加焦点事件监听，防止标题栏颜色变化
+    if (themeSource === 'dark' && process.platform === 'win32') {
+        mainWindow.on('focus', () => mainWindow.setBackgroundColor('#1c1f24'));
+        mainWindow.on('blur', () => mainWindow.setBackgroundColor('#1c1f24'));
+    }
 
     if (IS_IN_DEVELOP) {
         mainWindow.webContents.openDevTools() // 如果是开发模式，打开开发者工具
@@ -269,19 +312,26 @@ function showToolWindow() {
         return;
     }
     // 仅允许主窗口打开
-    if (!mainWindow || mainWindow.isDestroyed()) return;
-
-    let width = IS_IN_DEVELOP ? 1400 : 1000
+    if (!mainWindow || mainWindow.isDestroyed()) return;    let width = IS_IN_DEVELOP ? 1400 : 1000
     let height = IS_IN_DEVELOP ? 600 : 600
-    toolWindow = new BrowserWindow({
+      // 检查当前主题设置
+    const nativeTheme = require('electron').nativeTheme;
+    const themeSource = nativeTheme.themeSource;
+    const backgroundColor = themeSource === 'dark' ? '#1c1f24' : '#ffffff';
+    
+    // 创建窗口配置 - 简化版
+    const windowOptions = {
         width,
         height,
         icon: __dirname + '/assets/appIcon/appicon.ico', // windows icon
+        backgroundColor: backgroundColor,
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false
         }
-    })
+    };
+      // 创建工具窗口
+    toolWindow = new BrowserWindow(windowOptions)
     toolWindow.setMenu(null); // 移除菜单栏
 
     if (IS_IN_DEVELOP) {
@@ -468,17 +518,25 @@ function createConfigWindow() {
         console.log('create config dir', configDir)
         fs.mkdirSync(configDir) // 创建目录
 
-    }
-
-    configWindow = new BrowserWindow({
+    }    // 检查当前主题设置
+    const nativeTheme = require('electron').nativeTheme;
+    const themeSource = nativeTheme.themeSource;
+    const backgroundColor = themeSource === 'dark' ? '#1c1f24' : '#ffffff';
+    
+    // 创建窗口配置 - 简化版
+    const configWindowOptions = {
         width,
         height,
         icon: __dirname + '/assets/appIcon/appicon.ico', // windows icon
+        backgroundColor: backgroundColor,
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false
         }
-    })
+    };
+    
+    // 创建配置窗口
+    configWindow = new BrowserWindow(configWindowOptions)
     configWindow.setMenu(null); // 移除菜单栏
 
     if (IS_IN_DEVELOP) {
@@ -624,14 +682,53 @@ function writeConfigFile(contentString) {
 }
 
 app.on('ready', () => {
-    createMainWindow()
+    // 输出系统和Electron版本信息，便于调试
+    console.log('==== 系统和Electron信息 ====');
+    console.log('操作系统:', process.platform, os.release());
+    console.log('Electron版本:', process.versions.electron);
+    console.log('Chromium版本:', process.versions.chrome);
+    console.log('Node版本:', process.versions.node);
+    console.log('==========================');
+      createMainWindow()
     getDictFileList() // 读取目录中的所有码表文件
     createMenu() // 创建菜单
-
+    
     // 添加主题变更广播监听器
     ipcMain.on('theme-changed', (event, theme) => {
         // 获取所有打开的窗口
         const allWindows = BrowserWindow.getAllWindows();
+        
+        // 设置原生窗口外观
+        const nativeTheme = require('electron').nativeTheme;
+        if (theme === 'black') {
+            nativeTheme.themeSource = 'dark';            // 应用深色模式到所有窗口的原生部分
+            allWindows.forEach(window => {
+                // 在 Windows 平台上设置窗口背景色
+                if (process.platform === 'win32') {
+                    try {
+                        // 设置固定背景色
+                        window.setBackgroundColor('#1c1f24');
+                        
+                        // 为所有窗口添加焦点事件监听，防止标题栏颜色变化
+                        // 移除已存在的监听器避免重复
+                        window.removeAllListeners('focus');
+                        window.removeAllListeners('blur');
+                        
+                        // 添加新的监听器
+                        window.on('focus', () => window.setBackgroundColor('#1c1f24'));
+                        window.on('blur', () => window.setBackgroundColor('#1c1f24'));
+                        
+                    } catch (error) {
+                        console.log('设置窗口背景色失败:', error.message);
+                    }
+                }
+            });
+        } else if (theme === 'white') {
+            nativeTheme.themeSource = 'light';
+        } else if (theme === 'auto') {
+            nativeTheme.themeSource = 'system';
+        }
+        
         // 向所有窗口广播主题变更
         allWindows.forEach(window => {
             if (!window.isDestroyed() && window.webContents !== event.sender) {

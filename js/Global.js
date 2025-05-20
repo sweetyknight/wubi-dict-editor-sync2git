@@ -1,5 +1,5 @@
-const IS_IN_DEVELOP = false // 生产模式，上传到公共仓库应设为false
-// const IS_IN_DEVELOP = true // 开发模式
+// const IS_IN_DEVELOP = false // 生产模式，上传到公共仓库应设为false
+const IS_IN_DEVELOP = true // 开发模式
 
 const CONFIG_FILE_NAME = 'config.json' // 配置文件 文件名
 const CONFIG_DICT_MAP_FILE_NAME = 'dict_map.txt' // 编码生成用的字典码表文件
