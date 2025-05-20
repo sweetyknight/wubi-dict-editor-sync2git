@@ -1,5 +1,5 @@
 // 引入并设置控制台编码修复 (必须在其他模块之前引入)
-const { setupConsoleEncoding } = require('./consoleEncoding');
+const { setupConsoleEncoding } = require('./encoding');
 setupConsoleEncoding();
 
 const fs = require('fs');

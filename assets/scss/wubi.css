@@ -705,7 +705,9 @@
   -moz-border-radius: 3px;
   border-radius: 3px;
   white-space: nowrap;
-  padding: 2px 8px;
+  padding: 3px 8px;
+  height: 28px;
+  box-sizing: border-box;
   background-color: white;
   -webkit-transition: all 0.3s;
   -moz-transition: all 0.3s;
@@ -1167,32 +1169,41 @@ input[type=radio]:checked + label.radio:after {
   z-index: 10;
   border-bottom: 1px solid #eee;
   background-color: #f3f3f3;
-  padding: 10px;
+  padding: 12px 24px;
   position: sticky;
   top: 0;
   left: 0;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: flex-start;
+  gap: 8px;
 }
 .search-bar > * {
-  margin-right: 5px;
+  margin-right: 0;
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
 .notice {
-  margin-left: 20px;
+  margin-left: 8px;
   font-size: 11px;
   color: #848484;
+  display: flex;
+  align-items: center;
 }
 
 .input-item {
   position: relative;
+  display: flex;
+  align-items: center;
 }
 .input-item .btn-clear {
   cursor: pointer;
   position: absolute;
   right: 5px;
-  top: 5.5px;
+  top: 50%;
+  transform: translateY(-50%);
   z-index: 10;
   height: 15px;
   width: 15px;
@@ -1220,7 +1231,9 @@ input, select {
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
   border-radius: 3px;
-  padding: 3px 8px;
+  padding: 4px 8px;
+  height: 28px;
+  box-sizing: border-box;
   -webkit-transition: all, 0.5s;
   -moz-transition: all, 0.5s;
   -ms-transition: all, 0.5s;
@@ -2530,4 +2543,54 @@ body {
 .backup-info {
   font-size: 11px;
   color: #848484;
+}
+
+/* 响应式布局 - 搜索栏 */
+@media (max-width: 1200px) {
+  .search-bar {
+    padding: 12px 8px;
+    gap: 6px;
+  }
+  
+  input.word, select.word {
+    width: 10rem;
+  }
+  
+  input.note, select.note {
+    width: 8rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .search-bar {
+    gap: 5px;
+  }
+  
+  input.word, select.word {
+    width: 8rem;
+  }
+  
+  input.note, select.note {
+    width: 6rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .search-bar {
+    padding: 12px 2vw;
+    gap: 4px;
+  }
+  
+  input.word, select.word {
+    width: 7rem;
+  }
+  
+  input.note, select.note {
+    width: 5rem;
+  }
+  
+  input.code, select.code,
+  input.priority, select.priority {
+    width: 4rem;
+  }
 }

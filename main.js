@@ -1,9 +1,8 @@
 // 在应用程序的最开始，修复编码（必须在任何其他导入之前）
-const { fixElectronEncoding } = require('./js/electronEncoding');
+const { fixElectronEncoding, setupConsoleEncoding } = require('./js/encoding');
 const logFile = fixElectronEncoding();
 
-// 引入并设置控制台编码修复
-const { setupConsoleEncoding } = require('./js/consoleEncoding');
+// 设置控制台编码
 setupConsoleEncoding();
 
 const {app, globalShortcut, BrowserWindow, Menu, ipcMain, shell, dialog, Notification} = require('electron')
