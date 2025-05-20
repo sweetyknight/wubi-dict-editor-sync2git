@@ -1,0 +1,930 @@
+/**
+ * 合并的暗黑主题样式
+ * 该文件整合了多个分散的暗色主题CSS文件
+ */
+
+/* ----- 基础暗色主题设置 ----- */
+.theme-dark,
+html.theme-dark,
+body.theme-dark {
+  background-color: #1a1a1f !important;
+  color: #e6e6e6 !important;
+  background: #0f0f13 !important;
+}
+
+.theme-dark .app-container,
+html.theme-dark .app-container,
+body.theme-dark .app-container {
+  background-color: #0f0f13 !important;
+}
+
+/* ----- 布局组件 ----- */
+/* 从 layout-dark.css */
+.theme-dark .schema-list,
+html.theme-dark .schema-list,
+body.theme-dark .schema-list {
+  background-color: #1c1f24 !important;
+  border-right-color: #383f4a !important;
+  color: #e6e6e6 !important;
+}
+
+.theme-dark .content,
+.theme-dark .group-container,
+html.theme-dark .content,
+html.theme-dark .group-container,
+body.theme-dark .content,
+body.theme-dark .group-container {
+  background-color: #1c1f24 !important;
+  color: #e6e6e6 !important;
+}
+
+.theme-dark .main-tool,
+html.theme-dark .main-tool,
+body.theme-dark .main-tool {
+  background-color: #0f0f13 !important;
+  border-left-color: #383f4a !important;
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.25) !important;
+}
+
+.theme-dark .search-bar,
+html.theme-dark .search-bar,
+body.theme-dark .search-bar {
+  background-color: #1c1f24 !important;
+  border-bottom-color: #383f4a !important;
+}
+
+.theme-dark .footer,
+html.theme-dark .footer,
+body.theme-dark .footer {
+  background-color: #1c1f24 !important;
+  border-top-color: #383f4a !important;
+  color: #e6e6e6 !important;
+}
+
+/* ----- 表单元素 ----- */
+/* 从 form-dark.css */
+.theme-dark .section-content,
+html.theme-dark .section-content,
+body.theme-dark .section-content {
+  background-color: #0f0f13 !important;
+  border-color: #383f4a !important;
+}
+
+/* 表单组 */
+.theme-dark .form-group input,
+html.theme-dark .form-group input,
+body.theme-dark .form-group input {
+  background-color: #1c1f24 !important;
+  border-color: #383f4a !important;
+  color: #e6e6e6 !important;
+}
+
+.theme-dark .form-group input:focus,
+html.theme-dark .form-group input:focus,
+body.theme-dark .form-group input:focus {
+  border-color: #81fffa !important;
+  box-shadow: 0 0 0 2px rgba(129, 255, 250, 0.25) !important;
+}
+
+.theme-dark .form-group label,
+html.theme-dark .form-group label,
+body.theme-dark .form-group label {
+  color: #e6e6e6 !important;
+}
+
+/* 复选项 */
+.theme-dark .check-item,
+html.theme-dark .check-item,
+body.theme-dark .check-item {
+  color: #e6e6e6 !important;
+}
+
+.theme-dark .check-item p,
+html.theme-dark .check-item p,
+body.theme-dark .check-item p {
+  color: #e6e6e6 !important;
+}
+
+.theme-dark .check-item .label,
+html.theme-dark .check-item .label,
+body.theme-dark .check-item .label {
+  color: #e6e6e6 !important;
+}
+
+/* 章节标题 */
+.theme-dark .section-title h3,
+html.theme-dark .section-title h3,
+body.theme-dark .section-title h3 {
+  color: #e6e6e6 !important;
+}
+
+.theme-dark .section-title .desc,
+html.theme-dark .section-title .desc,
+body.theme-dark .section-title .desc {
+  color: #a0a0a0 !important;
+}
+
+/* ----- 按钮样式 ----- */
+/* 从 button-dark.css */
+.theme-dark .btn,
+html.theme-dark .btn,
+body.theme-dark .btn {
+  color: #e6e6e6;
+  background-color: #383f4a !important;
+  border-color: #252a31 !important;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out, background-color 0.2s ease-in-out !important;
+}
+
+.theme-dark .btn:hover,
+html.theme-dark .btn:hover,
+body.theme-dark .btn:hover {
+  background-color: #464f5f !important;
+  border-color: #303540 !important;
+}
+
+.theme-dark .btn-primary,
+html.theme-dark .btn-primary,
+body.theme-dark .btn-primary {
+  background: #4a5260 !important;
+  border-color: #323842 !important;
+  color: #81fffa !important;
+}
+
+.theme-dark .btn-primary:hover,
+html.theme-dark .btn-primary:hover,
+body.theme-dark .btn-primary:hover {
+  background: #5a6270 !important;
+  border-color: #4a5260 !important;
+}
+
+.theme-dark .btn-green,
+html.theme-dark .btn-green,
+body.theme-dark .btn-green {
+  background: #2db67c !important;
+  border-color: #259d69 !important;
+  color: #000 !important;
+  box-shadow: 0 0 10px rgba(45, 182, 124, 0.8) !important;
+  position: relative;
+  z-index: 1;
+  transform: scale(1.05) !important;
+}
+
+.theme-dark .btn-orange,
+html.theme-dark .btn-orange,
+body.theme-dark .btn-orange {
+  background: #ffb300 !important;
+  border-color: #e89c00 !important;
+  color: #000 !important;
+  box-shadow: 0 0 10px rgba(255, 179, 0, 0.8) !important;
+  position: relative;
+  z-index: 1;
+  transform: scale(1.05) !important;
+}
+
+.theme-dark .btn-blue,
+html.theme-dark .btn-blue,
+body.theme-dark .btn-blue {
+  background: #4a5260 !important;
+  border-color: #323842 !important;
+  color: #81fffa !important;
+}
+
+.theme-dark .btn-blue:hover,
+html.theme-dark .btn-blue:hover,
+body.theme-dark .btn-blue:hover {
+  background: #5a6270 !important;
+  border-color: #4a5260 !important;
+}
+
+.theme-dark .btn-alt-blue,
+html.theme-dark .btn-alt-blue,
+body.theme-dark .btn-alt-blue {
+  border-color: transparent !important;
+  background-color: transparent !important;
+  color: #81fffa !important;
+}
+
+/* 从 button-dark-override.css 和 button-selection-effect.css */
+.theme-dark .btn-orange,
+html.theme-dark .btn-orange,
+body.theme-dark .btn-orange,
+.theme-dark [class*="btn-orange"],
+html.theme-dark [class*="btn-orange"],
+body.theme-dark [class*="btn-orange"] {
+  background-color: #ffb300 !important;
+  border-color: #e89c00 !important;
+  color: #000 !important;
+  box-shadow: 0 0 10px rgba(255, 179, 0, 0.8) !important;
+  transform: scale(1.05) !important;
+}
+
+/* 工具面板中按钮的特殊样式 */
+.theme-dark .tool-panel section .btn-list .btn-item .btn-orange,
+html.theme-dark .tool-panel section .btn-list .btn-item .btn-orange,
+body.theme-dark .tool-panel section .btn-list .btn-item .btn-orange {
+  background-color: #ffb300 !important;
+  border-color: #e89c00 !important;
+  color: #000 !important;
+  box-shadow: 0 0 12px rgba(255, 179, 0, 0.9) !important;
+  transform: scale(1.08) !important;
+  font-weight: bold !important;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+}
+
+/* 特别区域按钮样式 */
+.theme-dark .tool-panel section:nth-child(1) .btn-orange,
+.theme-dark .tool-panel section:nth-child(2) .btn-orange,
+.theme-dark .tool-panel section:nth-child(4) .btn-orange,
+.theme-dark .tool-panel section:nth-child(13) .btn-orange,
+html.theme-dark .tool-panel section:nth-child(1) .btn-orange,
+html.theme-dark .tool-panel section:nth-child(2) .btn-orange,
+html.theme-dark .tool-panel section:nth-child(4) .btn-orange,
+html.theme-dark .tool-panel section:nth-child(13) .btn-orange,
+body.theme-dark .tool-panel section:nth-child(1) .btn-orange,
+body.theme-dark .tool-panel section:nth-child(2) .btn-orange,
+body.theme-dark .tool-panel section:nth-child(4) .btn-orange,
+body.theme-dark .tool-panel section:nth-child(13) .btn-orange {
+  background: #ffb300 !important;
+  border-color: #e89c00 !important;
+  color: #000 !important;
+  box-shadow: 0 0 15px rgba(255, 179, 0, 0.9) !important;
+  transform: scale(1.08) !important;
+  font-weight: bold !important;
+}
+
+/* ----- 列表项样式 ----- */
+/* 从 list-dark.css */
+.theme-dark .word-item,
+html.theme-dark .word-item,
+body.theme-dark .word-item {
+  color: #e6e6e6 !important;
+  border-bottom-color: #383f4a !important;
+}
+
+.theme-dark .word-item:hover,
+html.theme-dark .word-item:hover,
+body.theme-dark .word-item:hover {
+  background-color: #252a31 !important;
+}
+
+.theme-dark .word-item .code,
+html.theme-dark .word-item .code, 
+body.theme-dark .word-item .code {
+  color: #81fffa !important;
+}
+
+.theme-dark .word-item .word,
+html.theme-dark .word-item .word,
+body.theme-dark .word-item .word {
+  color: #e6e6e6 !important;
+}
+
+.theme-dark .word-item .priority,
+html.theme-dark .word-item .priority,
+body.theme-dark .word-item .priority {
+  color: #b3b3b3 !important;
+}
+
+.theme-dark .word-item .note,
+html.theme-dark .word-item .note,
+body.theme-dark .word-item .note {
+  color: #b3b3b3 !important;
+}
+
+.theme-dark .word-item .indicator,
+html.theme-dark .word-item .indicator,
+body.theme-dark .word-item .indicator {
+  color: #a0a0a0 !important;
+}
+
+.theme-dark .word-item .id,
+html.theme-dark .word-item .id,
+body.theme-dark .word-item .id {
+  color: #808080 !important;
+}
+
+/* 分组样式 */
+.theme-dark .group-header,
+html.theme-dark .group-header,
+body.theme-dark .group-header {
+  background-color: #252a31 !important;
+  border-color: #383f4a !important;
+  color: #e6e6e6 !important;
+}
+
+.theme-dark .group-header .group-name,
+html.theme-dark .group-header .group-name,
+body.theme-dark .group-header .group-name {
+  color: #e6e6e6 !important;
+}
+
+.theme-dark .group-header .group-count,
+html.theme-dark .group-header .group-count, 
+body.theme-dark .group-header .group-count {
+  color: #b3b3b3 !important;
+}
+
+.theme-dark .group-body,
+html.theme-dark .group-body,
+body.theme-dark .group-body {
+  border-color: #383f4a !important;
+}
+
+/* ----- 活跃元素样式 ----- */
+/* 从 active-button-dark.css */
+.theme-dark .config-file-list-item.active,
+html.theme-dark .config-file-list-item.active,
+body.theme-dark .config-file-list-item.active {
+  background-color: #2a323f !important;
+  border-left: 4px solid #81fffa !important;
+  color: #81fffa !important;
+  font-weight: 500;
+  box-shadow: 0 0 8px rgba(129, 255, 250, 0.3) !important;
+}
+
+.theme-dark .file-list-item.active,
+html.theme-dark .file-list-item.active,
+body.theme-dark .file-list-item.active {
+  background-color: #2a323f !important;
+  color: #81fffa !important;
+  font-weight: 500;
+}
+
+.theme-dark .group .group-header.active,
+html.theme-dark .group .group-header.active,
+body.theme-dark .group .group-header.active {
+  background-color: #2a323f !important;
+}
+
+.theme-dark .word-item.active,
+html.theme-dark .word-item.active,
+body.theme-dark .word-item.active {
+  background-color: #2a323f !important;
+}
+
+/* ----- 工具面板样式 ----- */
+/* 从 tool-panel-dark.css */
+.theme-dark .tool-panel,
+html.theme-dark .tool-panel,
+body.theme-dark .tool-panel,
+.theme-dark .container.tool-container .tool-panel,
+html.theme-dark .container.tool-container .tool-panel,
+body.theme-dark .container.tool-container .tool-panel,
+.theme-dark .tool .tool-panel,
+html.theme-dark .tool .tool-panel,
+body.theme-dark .tool .tool-panel,
+.theme-dark.tool .tool-panel,
+body.theme-dark.tool .tool-panel,
+html.theme-dark.tool .tool-panel,
+.theme-dark.tool .container.tool-container .tool-panel,
+body.theme-dark.tool .container.tool-container .tool-panel,
+html.theme-dark.tool .container.tool-container .tool-panel {
+  background-color: #1c1f24 !important;
+  border-right-color: #383f4a !important;
+  color: #e6e6e6 !important;
+}
+
+.theme-dark .tool-panel .title,
+html.theme-dark .tool-panel .title,
+body.theme-dark .tool-panel .title {
+  color: #e6e6e6 !important;
+}
+
+.theme-dark .tool-panel .content,
+html.theme-dark .tool-panel .content,
+body.theme-dark .tool-panel .content,
+.theme-dark .tool-container .tool-panel .content,
+html.theme-dark .tool-container .tool-panel .content,
+body.theme-dark .tool-container .tool-panel .content {
+  background-color: #0f0f13 !important;
+  color: #e6e6e6 !important;
+}
+
+/* ----- 对话框样式 ----- */
+/* 从 custom-dialog-dark.css */
+.theme-dark .custom-dialog-mask,
+html.theme-dark .custom-dialog-mask,
+body.theme-dark .custom-dialog-mask {
+  background: rgba(0,0,0,0.45);
+}
+
+.theme-dark .custom-dialog,
+html.theme-dark .custom-dialog,
+body.theme-dark .custom-dialog {
+  background: #1c1f24;
+  border-color: #383f4a;
+  box-shadow: 0 10px 36px rgba(0,0,0,0.35), 0 2px 10px 0 rgba(0,0,0,0.25);
+}
+
+.theme-dark .custom-dialog-content,
+html.theme-dark .custom-dialog-content,
+body.theme-dark .custom-dialog-content {
+  color: #e6e6e6;
+}
+
+.theme-dark .custom-dialog button, 
+.theme-dark .custom-dialog .btn,
+html.theme-dark .custom-dialog button, 
+html.theme-dark .custom-dialog .btn,
+body.theme-dark .custom-dialog button, 
+body.theme-dark .custom-dialog .btn {
+  background: #383f4a;
+  color: #e6e6e6;
+  border-color: #4a4a4a;
+  box-shadow: 0 1.5px 6px rgba(0,0,0,0.25);
+}
+
+/* ----- 修复和覆盖 ----- */
+/* 从 dark-blue-fix.css */
+.theme-dark .file-list .file-list-item.active,
+.theme-dark .file-list .file-list-item:active,
+html.theme-dark .file-list .file-list-item.active,
+html.theme-dark .file-list .file-list-item:active,
+body.theme-dark .file-list .file-list-item.active,
+body.theme-dark .file-list .file-list-item:active {
+  background-color: #81fffa !important;
+  color: black !important;
+}
+
+.theme-dark .origin.blue,
+html.theme-dark .origin.blue,
+body.theme-dark .origin.blue {
+  color: #81fffa !important;
+}
+
+/* 暗黑模式下的主色调 */
+.theme-dark .text-primary,
+.theme-dark .primary-color,
+.theme-dark a,
+.theme-dark .link,
+.theme-dark a.link,
+html.theme-dark .text-primary,
+html.theme-dark .primary-color,
+html.theme-dark a,
+html.theme-dark .link,
+html.theme-dark a.link,
+body.theme-dark .text-primary,
+body.theme-dark .primary-color,
+body.theme-dark a,
+body.theme-dark .link,
+body.theme-dark a.link {
+  color: #81fffa !important;
+}
+
+.theme-dark .bg-primary,
+.theme-dark .primary-bg,
+html.theme-dark .bg-primary,
+html.theme-dark .primary-bg,
+body.theme-dark .bg-primary,
+body.theme-dark .primary-bg {
+  background-color: #81fffa !important;
+  color: black !important;
+}
+
+/* 修复容器背景 */
+.theme-dark .container.tool-container, 
+html.theme-dark .container.tool-container,
+body.theme-dark .container.tool-container {
+  background-color: #0f0f13 !important;
+}
+
+/* 从 force-dark-override.css */
+html.theme-dark body .tool-panel,
+body.theme-dark .tool-panel,
+html.theme-dark body .container.tool-container .tool-panel,
+body.theme-dark .container.tool-container .tool-panel,
+body.theme-dark.tool .tool-panel,
+body.theme-dark.tool .container.tool-container .tool-panel {
+  background-color: #1c1f24 !important;
+  border-right-color: #383f4a !important;
+  color: #e6e6e6 !important;
+}
+
+html.theme-dark body .tool-panel .content,
+body.theme-dark .tool-panel .content,
+html.theme-dark body .container.tool-container .tool-panel .content,
+body.theme-dark .container.tool-container .tool-panel .content {
+  background-color: #0f0f13 !important;
+  color: #e6e6e6 !important;
+}
+
+html.theme-dark body .btn-primary,
+body.theme-dark .btn-primary,
+body.theme-dark .btn-blue,
+html.theme-dark body .btn-blue {
+  background: #4a5260 !important;
+  border-color: #323842 !important;
+  color: #81fffa !important;
+}
+
+html.theme-dark body .btn-primary:hover,
+body.theme-dark .btn-primary:hover,
+body.theme-dark .btn-blue:hover,
+html.theme-dark body .btn-blue:hover {
+  background: #5a6270 !important;
+  border-color: #4a5260 !important;
+}
+
+/* ----- 自动主题模式 ----- */
+@media (prefers-color-scheme: dark) {
+  /* ----- 基础样式 ----- */
+  .theme-auto,
+  html.theme-auto,
+  body.theme-auto {
+    background: #0f0f13 !important;
+  }
+
+  .theme-auto .app-container,
+  html.theme-auto .app-container,
+  body.theme-auto .app-container {
+    background-color: #0f0f13 !important;
+  }
+
+  /* ----- 布局组件 ----- */
+  .theme-auto .schema-list,
+  html.theme-auto .schema-list,
+  body.theme-auto .schema-list {
+    background-color: #1c1f24 !important;
+    border-right-color: #383f4a !important;
+    color: #e6e6e6 !important;
+  }
+
+  .theme-auto .content,
+  .theme-auto .group-container,
+  html.theme-auto .content,
+  html.theme-auto .group-container,
+  body.theme-auto .content,
+  body.theme-auto .group-container {
+    background-color: #1c1f24 !important;
+    color: #e6e6e6 !important;
+  }
+
+  .theme-auto .main-tool,
+  html.theme-auto .main-tool,
+  body.theme-auto .main-tool {
+    background-color: #0f0f13 !important;
+    border-left-color: #383f4a !important;
+    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.25) !important;
+  }
+
+  .theme-auto .search-bar,
+  html.theme-auto .search-bar,
+  body.theme-auto .search-bar {
+    background-color: #1c1f24 !important;
+    border-bottom-color: #383f4a !important;
+  }
+
+  .theme-auto .footer,
+  html.theme-auto .footer,
+  body.theme-auto .footer {
+    background-color: #1c1f24 !important;
+    border-top-color: #383f4a !important;
+    color: #e6e6e6 !important;
+  }
+
+  /* ----- 表单样式 ----- */
+  .theme-auto .section-content,
+  html.theme-auto .section-content,
+  body.theme-auto .section-content {
+    background-color: #0f0f13 !important;
+    border-color: #383f4a !important;
+  }
+
+  /* Form group */
+  .theme-auto .form-group input,
+  html.theme-auto .form-group input,
+  body.theme-auto .form-group input {
+    background-color: #1c1f24 !important;
+    border-color: #383f4a !important;
+    color: #e6e6e6 !important;
+  }
+
+  .theme-auto .form-group input:focus,
+  html.theme-auto .form-group input:focus,
+  body.theme-auto .form-group input:focus {
+    border-color: #81fffa !important;
+    box-shadow: 0 0 0 2px rgba(129, 255, 250, 0.25) !important;
+  }
+
+  .theme-auto .form-group label,
+  html.theme-auto .form-group label,
+  body.theme-auto .form-group label {
+    color: #e6e6e6 !important;
+  }
+
+  /* 检查项 */
+  .theme-auto .check-item,
+  html.theme-auto .check-item,
+  body.theme-auto .check-item {
+    color: #e6e6e6 !important;
+  }
+
+  .theme-auto .check-item p,
+  html.theme-auto .check-item p,
+  body.theme-auto .check-item p {
+    color: #e6e6e6 !important;
+  }
+
+  .theme-auto .check-item .label,
+  html.theme-auto .check-item .label,
+  body.theme-auto .check-item .label {
+    color: #e6e6e6 !important;
+  }
+
+  /* 章节标题 */
+  .theme-auto .section-title h3,
+  html.theme-auto .section-title h3,
+  body.theme-auto .section-title h3 {
+    color: #e6e6e6 !important;
+  }
+
+  .theme-auto .section-title .desc,
+  html.theme-auto .section-title .desc,
+  body.theme-auto .section-title .desc {
+    color: #a0a0a0 !important;
+  }
+
+  /* ----- 按钮样式 ----- */
+  .theme-auto .btn,
+  html.theme-auto .btn,
+  body.theme-auto .btn {
+    color: #e6e6e6;
+    background-color: #383f4a !important;
+    border-color: #252a31 !important;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out, background-color 0.2s ease-in-out !important;
+  }
+
+  .theme-auto .btn-primary,
+  html.theme-auto .btn-primary,
+  body.theme-auto .btn-primary {
+    background: #4a5260 !important;
+    border-color: #323842 !important;
+    color: #81fffa !important;
+  }
+
+  .theme-auto .btn-primary:hover,
+  html.theme-auto .btn-primary:hover,
+  body.theme-auto .btn-primary:hover {
+    background: #5a6270 !important;
+    border-color: #4a5260 !important;
+  }
+
+  .theme-auto .btn-green,
+  html.theme-auto .btn-green,
+  body.theme-auto .btn-green {
+    background: #2db67c !important;
+    border-color: #259d69 !important;
+    color: #000 !important;
+    box-shadow: 0 0 10px rgba(45, 182, 124, 0.8) !important;
+    position: relative;
+    z-index: 1;
+    transform: scale(1.05) !important;
+  }
+
+  .theme-auto .btn-orange,
+  html.theme-auto .btn-orange,
+  body.theme-auto .btn-orange {
+    background: #ffb300 !important;
+    border-color: #e89c00 !important;
+    color: #000 !important;
+    box-shadow: 0 0 10px rgba(255, 179, 0, 0.8) !important;
+    position: relative;
+    z-index: 1;
+    transform: scale(1.05) !important;
+  }
+
+  .theme-auto .btn-blue,
+  html.theme-auto .btn-blue,
+  body.theme-auto .btn-blue {
+    background: #4a5260 !important;
+    border-color: #323842 !important;
+    color: #81fffa !important;
+  }
+
+  .theme-auto .btn-blue:hover,
+  html.theme-auto .btn-blue:hover,
+  body.theme-auto .btn-blue:hover {
+    background: #5a6270 !important;
+    border-color: #4a5260 !important;
+  }
+
+  /* 按钮选中状态 */
+  .theme-auto .tool-panel section .btn-list .btn-item .btn-orange,
+  html.theme-auto .tool-panel section .btn-list .btn-item .btn-orange,
+  body.theme-auto .tool-panel section .btn-list .btn-item .btn-orange {
+    background-color: #ffb300 !important;
+    border-color: #e89c00 !important;
+    color: #000 !important;
+    box-shadow: 0 0 12px rgba(255, 179, 0, 0.9) !important;
+    transform: scale(1.08) !important;
+    font-weight: bold !important;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+  }
+
+  /* ----- 列表项样式 ----- */
+  .theme-auto .word-item,
+  html.theme-auto .word-item,
+  body.theme-auto .word-item {
+    color: #e6e6e6 !important;
+    border-bottom-color: #383f4a !important;
+  }
+
+  .theme-auto .word-item:hover,
+  html.theme-auto .word-item:hover,
+  body.theme-auto .word-item:hover {
+    background-color: #252a31 !important;
+  }
+
+  .theme-auto .word-item .code,
+  html.theme-auto .word-item .code, 
+  body.theme-auto .word-item .code {
+    color: #81fffa !important;
+  }
+
+  .theme-auto .schema-list .schema-item:hover,
+  html.theme-auto .schema-list .schema-item:hover,
+  body.theme-auto .schema-list .schema-item:hover {
+    background-color: #252a31 !important;
+  }
+
+  .theme-auto .schema-list .schema-item.active,
+  html.theme-auto .schema-list .schema-item.active,
+  body.theme-auto .schema-list .schema-item.active {
+    background-color: #323842 !important;
+    color: #81fffa !important;
+  }
+
+  /* ----- 活跃元素样式 ----- */
+  .theme-auto .config-file-list-item.active,
+  html.theme-auto .config-file-list-item.active,
+  body.theme-auto .config-file-list-item.active {
+    background-color: #2a323f !important;
+    border-left: 4px solid #81fffa !important;
+    color: #81fffa !important;
+    font-weight: 500;
+    box-shadow: 0 0 8px rgba(129, 255, 250, 0.3) !important;
+  }
+
+  .theme-auto .file-list-item.active,
+  html.theme-auto .file-list-item.active,
+  body.theme-auto .file-list-item.active {
+    background-color: #2a323f !important;
+    color: #81fffa !important;
+    font-weight: 500;
+  }
+
+  .theme-auto .group .group-header.active,
+  html.theme-auto .group .group-header.active,
+  body.theme-auto .group .group-header.active {
+    background-color: #2a323f !important;
+  }
+
+  .theme-auto .word-item.active,
+  html.theme-auto .word-item.active,
+  body.theme-auto .word-item.active {
+    background-color: #2a323f !important;
+  }
+
+  /* ----- 工具面板样式 ----- */
+  .theme-auto .tool-panel,
+  html.theme-auto .tool-panel,
+  body.theme-auto .tool-panel {
+    background-color: #1c1f24 !important;
+    border-right-color: #383f4a !important;
+    color: #e6e6e6 !important;
+  }
+
+  .theme-auto .tool-panel .title,
+  html.theme-auto .tool-panel .title,
+  body.theme-auto .tool-panel .title {
+    color: #e6e6e6 !important;
+  }
+
+  .theme-auto .tool-panel .content,
+  html.theme-auto .tool-panel .content,
+  body.theme-auto .tool-panel .content {
+    background-color: #0f0f13 !important;
+    color: #e6e6e6 !important;
+  }
+
+  /* ----- 对话框样式 ----- */
+  .theme-auto .custom-dialog-mask,
+  html.theme-auto .custom-dialog-mask,
+  body.theme-auto .custom-dialog-mask {
+    background: rgba(0,0,0,0.45);
+  }
+  
+  .theme-auto .custom-dialog,
+  html.theme-auto .custom-dialog,
+  body.theme-auto .custom-dialog {
+    background: #1c1f24;
+    border-color: #383f4a;
+    box-shadow: 0 10px 36px rgba(0,0,0,0.35), 0 2px 10px 0 rgba(0,0,0,0.25);
+  }
+  
+  .theme-auto .custom-dialog-content,
+  html.theme-auto .custom-dialog-content,
+  body.theme-auto .custom-dialog-content {
+    color: #e6e6e6;
+  }
+  
+  .theme-auto .custom-dialog button, 
+  .theme-auto .custom-dialog .btn,
+  html.theme-auto .custom-dialog button, 
+  html.theme-auto .custom-dialog .btn,
+  body.theme-auto .custom-dialog button, 
+  body.theme-auto .custom-dialog .btn {
+    background: #383f4a;
+    color: #e6e6e6;
+    border-color: #4a4a4a;
+    box-shadow: 0 1.5px 6px rgba(0,0,0,0.25);
+  }
+
+  /* ----- 修复和覆盖 ----- */
+  .theme-auto .file-list .file-list-item.active,
+  .theme-auto .file-list .file-list-item:active,
+  html.theme-auto .file-list .file-list-item.active,
+  html.theme-auto .file-list .file-list-item:active,
+  body.theme-auto .file-list .file-list-item.active,
+  body.theme-auto .file-list .file-list-item:active {
+    background-color: #81fffa !important;
+    color: black !important;
+  }
+
+  .theme-auto .origin.blue,
+  html.theme-auto .origin.blue,
+  body.theme-auto .origin.blue {
+    color: #81fffa !important;
+  }
+
+  .theme-auto .text-primary,
+  .theme-auto .primary-color,
+  .theme-auto a,
+  .theme-auto .link,
+  .theme-auto a.link,
+  html.theme-auto .text-primary,
+  html.theme-auto .primary-color,
+  html.theme-auto a,
+  html.theme-auto .link,
+  html.theme-auto a.link,
+  body.theme-auto .text-primary,
+  body.theme-auto .primary-color,
+  body.theme-auto a,
+  body.theme-auto .link,
+  body.theme-auto a.link {
+    color: #81fffa !important;
+  }
+
+  .theme-auto .bg-primary,
+  .theme-auto .primary-bg,
+  html.theme-auto .bg-primary,
+  html.theme-auto .primary-bg,
+  body.theme-auto .bg-primary,
+  body.theme-auto .primary-bg {
+    background-color: #81fffa !important;
+    color: black !important;
+  }
+  
+  .theme-auto .container.tool-container, 
+  html.theme-auto .container.tool-container,
+  body.theme-auto .container.tool-container {
+    background-color: #0f0f13 !important;
+  }
+
+  /* 强制覆盖 */  
+  html.theme-auto body .tool-panel,
+  body.theme-auto .tool-panel,
+  html.theme-auto body .container.tool-container .tool-panel,
+  body.theme-auto .container.tool-container .tool-panel,
+  body.theme-auto.tool .tool-panel,
+  body.theme-auto.tool .container.tool-container .tool-panel {
+    background-color: #1c1f24 !important;
+    border-right-color: #383f4a !important;
+    color: #e6e6e6 !important;
+  }
+  
+  html.theme-auto body .tool-panel .content,
+  body.theme-auto .tool-panel .content,
+  html.theme-auto body .container.tool-container .tool-panel .content,
+  body.theme-auto .container.tool-container .tool-panel .content {
+    background-color: #0f0f13 !important;
+    color: #e6e6e6 !important;
+  }
+  
+  html.theme-auto body .btn-primary,
+  body.theme-auto .btn-primary,
+  body.theme-auto .btn-blue,
+  html.theme-auto body .btn-blue {
+    background: #4a5260 !important;
+    border-color: #323842 !important;
+    color: #81fffa !important;
+  }
+  
+  html.theme-auto body .btn-primary:hover,
+  body.theme-auto .btn-primary:hover,
+  body.theme-auto .btn-blue:hover,
+  html.theme-auto body .btn-blue:hover {
+    background: #5a6270 !important;
+    border-color: #4a5260 !important;
+  }
+}
