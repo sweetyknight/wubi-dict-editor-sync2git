@@ -1,3 +1,17 @@
+/**
+ * 主样式文件 - 包含所有应用样式
+ * 
+ * 此文件是由多个CSS文件合并而来，已包含以下文件的样式：
+ * - reset.css（通过import导入）
+ * - custom-dialog.css
+ * - sync-styles.css
+ * - sync-file-list.css
+ * - override-inline.css
+ * - tool-container.css
+ * - theme-dark.css
+ * 
+ * 最后更新: 2025-05-20
+ */
 @import "reset.css";
 @font-face {
   font-family: "Roboto-v27-light";
@@ -2592,5 +2606,667 @@ body {
   input.code, select.code,
   input.priority, select.priority {
     width: 4rem;
+  }
+}
+
+/* ========== 合并自 custom-dialog.css ========== */
+.custom-dialog-mask {
+  position: fixed;
+  z-index: 9999;
+  left: 0; top: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+}
+.custom-dialog {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 10px 36px rgba(0,0,0,0.15), 0 2px 10px 0 rgba(0,0,0,0.09);
+  min-width: 340px;
+  max-width: 96vw;
+  padding: 32px 32px 24px 32px;
+  font-size: 18px;
+  color: #222;
+  font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif;
+  animation: popIn .22s cubic-bezier(.4,2,.6,1.2);
+  border: 1.5px solid #e3e8f0;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+}
+.custom-dialog::before {
+  content: "\26A0";
+  display: block;
+  font-size: 34px;
+  color: #ffb300;
+  margin-bottom: 8px;
+  margin-top: -8px;
+  text-align: center;
+  filter: drop-shadow(0 2px 2px #fff6);
+  opacity: 0.92;
+}
+.custom-dialog-content {
+  text-align: center;
+  word-break: break-all;
+  line-height: 1.85;
+  letter-spacing: 0.01em;
+  padding: 0 8px 12px 8px;
+  width: 100%;
+  font-size: 17.5px;
+  color: #222;
+}
+.custom-dialog .dialog-btns {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 22px;
+  margin-top: 10px;
+  width: 100%;
+  padding-bottom: 2px;
+}
+.custom-dialog button, .custom-dialog .btn {
+  background: #f7f7f7;
+  color: #222;
+  border: 1.5px solid #e3e8f0;
+  border-radius: 9px;
+  padding: 8px 30px;
+  font-size: 16.5px;
+  margin: 0;
+  box-shadow: 0 1.5px 6px #0001;
+  transition: background .18s, color .18s, box-shadow .18s;
+  cursor: pointer;
+  min-width: 96px;
+  min-height: 38px;
+  font-weight: 500;
+  outline: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.custom-dialog .btn-primary, .custom-dialog button.btn-primary {
+  background: #2db67c;
+  color: #fff;
+  border: none;
+}
+.custom-dialog .btn-orange, .custom-dialog button.btn-orange {
+  background: #ffb300;
+  color: #fff;
+  border: none;
+}
+.custom-dialog .btn-primary:hover, .custom-dialog .btn-orange:hover {
+  filter: brightness(0.96);
+  box-shadow: 0 2px 10px #2db67c22;
+}
+.custom-dialog .btn:active, .custom-dialog button:active {
+  filter: brightness(0.92);
+}
+@keyframes popIn {
+  0% { transform: scale(0.7); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+@media (max-width: 480px) {
+  .custom-dialog {
+    min-width: 0;
+    width: 92%;
+    padding: 24px 20px 18px 20px;
+    font-size: 16px;
+  }
+  .custom-dialog::before {
+    font-size: 28px;
+  }
+  .custom-dialog-content {
+    font-size: 16px;
+  }
+  .custom-dialog .dialog-btns {
+    gap: 12px;
+  }
+  .custom-dialog button, .custom-dialog .btn {
+    padding: 6px 20px;
+    font-size: 15px;
+    min-width: 80px;
+  }
+}
+
+/* 深色模式下的对话框 */
+.theme-dark .custom-dialog,
+html.theme-dark .custom-dialog,
+body.theme-dark .custom-dialog {
+  background-color: #1c1f24;
+  color: #e6e6e6;
+  border-color: #383f4a;
+}
+.theme-dark .custom-dialog-content,
+html.theme-dark .custom-dialog-content,
+body.theme-dark .custom-dialog-content {
+  color: #e6e6e6;
+}
+.theme-dark .custom-dialog button,
+html.theme-dark .custom-dialog button,
+body.theme-dark .custom-dialog button,
+.theme-dark .custom-dialog .btn,
+html.theme-dark .custom-dialog .btn,
+body.theme-dark .custom-dialog .btn {
+  background-color: #2a2e36;
+  color: #e6e6e6;
+  border-color: #383f4a;
+}
+.theme-dark .custom-dialog .btn-primary,
+html.theme-dark .custom-dialog .btn-primary,
+body.theme-dark .custom-dialog .btn-primary {
+  background-color: #2db67c;
+  color: #fff;
+  border: none;
+}
+.theme-dark .custom-dialog .btn-orange,
+html.theme-dark .custom-dialog .btn-orange,
+body.theme-dark .custom-dialog .btn-orange {
+  background-color: #ffb300;
+  color: #fff;
+  border: none;
+}
+
+/* 自动主题 */
+@media (prefers-color-scheme: dark) {
+  .theme-auto .custom-dialog,
+  html.theme-auto .custom-dialog,
+  body.theme-auto .custom-dialog {
+    background-color: #1c1f24;
+    color: #e6e6e6;
+    border-color: #383f4a;
+  }
+  .theme-auto .custom-dialog-content,
+  html.theme-auto .custom-dialog-content,
+  body.theme-auto .custom-dialog-content {
+    color: #e6e6e6;
+  }
+  .theme-auto .custom-dialog button,
+  html.theme-auto .custom-dialog button,
+  body.theme-auto .custom-dialog button,
+  .theme-auto .custom-dialog .btn,
+  html.theme-auto .custom-dialog .btn,
+  body.theme-auto .custom-dialog .btn {
+    background-color: #2a2e36;
+    color: #e6e6e6;
+    border-color: #383f4a;
+  }
+  .theme-auto .custom-dialog .btn-primary,
+  html.theme-auto .custom-dialog .btn-primary,
+  body.theme-auto .custom-dialog .btn-primary {
+    background-color: #2db67c;
+    color: #fff;
+    border: none;
+  }
+  .theme-auto .custom-dialog .btn-orange,
+  html.theme-auto .custom-dialog .btn-orange,
+  body.theme-auto .custom-dialog .btn-orange {
+    background-color: #ffb300;
+    color: #fff;
+    border: none;
+  }
+}
+
+/* ========== 合并自 sync-styles.css ========== */
+/* 
+ * Sync related styles
+ * This file contains styles for the sync functionality
+ */
+
+/* Sync file items */
+.sync-file-list {
+  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 12px;
+}
+
+.sync-file-item {
+  display: flex;
+  align-items: center;
+  background: #f3f4f6;
+  padding: 5px 18px 5px 12px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  font-size: 15px;
+  border-radius: 4px;
+}
+
+.sync-file-item .remove-x {
+  margin-left: 10px;
+  color: #d8000c;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 18px;
+  line-height: 1;
+}
+
+/* Sync warning */
+.sync-warning {
+  background: #fff7e6;
+  color: #d8000c;
+  padding: 8px 16px;
+  font-size: 15px;
+  line-height: 1.6;
+  margin-bottom: 0;
+  border-radius: 4px;
+  border: 1px solid #ffebb3;
+}
+
+/* Dark theme styles */
+.theme-dark .sync-file-item,
+html.theme-dark .sync-file-item,
+body.theme-dark .sync-file-item {
+  background-color: #383f4a !important;
+  color: #e6e6e6 !important;
+  border-color: #4a4a4a !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5) !important;
+}
+
+.theme-dark .sync-file-item .remove-x,
+html.theme-dark .sync-file-item .remove-x,
+body.theme-dark .sync-file-item .remove-x {
+  color: #81fffa !important;
+}
+
+.theme-dark .sync-warning,
+html.theme-dark .sync-warning,
+body.theme-dark .sync-warning {
+  background-color: #0f0f13 !important;
+  border-color: #383f4a !important;
+  color: #81fffa !important;
+}
+
+/* Auto theme with system preference */
+@media (prefers-color-scheme: dark) {
+  .theme-auto .sync-file-item,
+  html.theme-auto .sync-file-item,
+  body.theme-auto .sync-file-item {
+    background-color: #383f4a !important;
+    color: #e6e6e6 !important;
+    border-color: #4a4a4a !important;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5) !important;
+  }
+
+  .theme-auto .sync-file-item .remove-x,
+  html.theme-auto .sync-file-item .remove-x,
+  body.theme-auto .sync-file-item .remove-x {
+    color: #81fffa !important;
+  }
+
+  .theme-auto .sync-warning,
+  html.theme-auto .sync-warning,
+  body.theme-auto .sync-warning {
+    background-color: #0f0f13 !important;
+    border-color: #383f4a !important;
+    color: #81fffa !important;
+  }
+}
+
+/* ========== 合并自 sync-file-list.css ========== */
+/* Sync file list item styles */
+.sync-file-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    min-height: 100px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.sync-file-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 10px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+.theme-dark .sync-file-item,
+html.theme-dark .sync-file-item,
+body.theme-dark .sync-file-item {
+    background-color: #2a323f;
+    color: #e6e6e6;
+}
+
+.sync-file-item .remove-x {
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 18px;
+    font-weight: bold;
+    color: #ff5252;
+    margin-left: 10px;
+}
+
+.theme-dark .sync-file-item .remove-x,
+html.theme-dark .sync-file-item .remove-x,
+body.theme-dark .sync-file-item .remove-x {
+    color: #ff7070;
+}
+
+/* Auto theme mode */
+@media (prefers-color-scheme: dark) {
+    .theme-auto .sync-file-item,
+    html.theme-auto .sync-file-item,
+    body.theme-auto .sync-file-item {
+        background-color: #2a323f;
+        color: #e6e6e6;
+    }
+
+    .theme-auto .sync-file-item .remove-x,
+    html.theme-auto .sync-file-item .remove-x,
+    body.theme-auto .sync-file-item .remove-x {
+        color: #ff7070;
+    }
+}
+
+/* ========== 合并自 tool-container.css ========== */
+/* Tool container specific styles */
+.container.tool-container {
+  background-color: #fff;
+}
+
+/* Dark mode styles */
+.theme-dark .container.tool-container,
+html.theme-dark .container.tool-container,
+body.theme-dark .container.tool-container {
+  background-color: #0f0f13 !important;
+}
+
+/* Auto theme with system preference */
+@media (prefers-color-scheme: dark) {
+  .theme-auto .container.tool-container,
+  html.theme-auto .container.tool-container,
+  body.theme-auto .container.tool-container {
+    background-color: #0f0f13 !important;
+  }
+}
+
+/* ========== 合并自 override-inline.css ========== */
+/* 
+ * 覆盖内联样式的高优先级样式
+ * 这个文件用于确保暗色主题样式可以覆盖内联样式
+ */
+
+/* 覆盖sync-warning的内联样式 */
+.theme-dark .sync-warning,
+html.theme-dark .sync-warning,
+body.theme-dark .sync-warning {
+  background-color: #0f0f13 !important;
+  color: #81fffa !important;
+  border: 1px solid #383f4a !important;
+  padding: 8px 16px !important;
+  font-size: 15px !important;
+  line-height: 1.6 !important;
+}
+
+/* 覆盖内联的高亮文字颜色 */
+.theme-dark .sync-warning span,
+html.theme-dark .sync-warning span,
+body.theme-dark .sync-warning span {
+  color: #ffb300 !important;
+  font-weight: 600 !important;
+}
+
+.theme-dark .sync-warning span:last-child,
+html.theme-dark .sync-warning span:last-child,
+body.theme-dark .sync-warning span:last-child {
+  color: #2db67c !important;
+  font-weight: 600 !important;
+}
+
+/* 覆盖content区域的内联背景色 */
+.theme-dark .content,
+html.theme-dark .content,
+body.theme-dark .content {
+  background-color: #1c1f24 !important;
+}
+
+/* 覆盖schema-list的内联背景色 */
+.theme-dark .schema-list,
+html.theme-dark .schema-list,
+body.theme-dark .schema-list {
+  background-color: #1c1f24 !important;
+  border-right: 1px solid #383f4a !important;
+}
+
+/* 覆盖container.tool-container的内联背景色 */
+.theme-dark .container.tool-container,
+html.theme-dark .container.tool-container,
+body.theme-dark .container.tool-container {
+  background-color: #0f0f13 !important;
+}
+
+/* 添加自动主题检测的覆盖样式 */
+@media (prefers-color-scheme: dark) {
+  .theme-auto .sync-warning,
+  html.theme-auto .sync-warning,
+  body.theme-auto .sync-warning {
+    background-color: #0f0f13 !important;
+    color: #81fffa !important;
+    border: 1px solid #383f4a !important;
+    padding: 8px 16px !important;
+    font-size: 15px !important;
+    line-height: 1.6 !important;
+  }
+
+  .theme-auto .content,
+  html.theme-auto .content,
+  body.theme-auto .content {
+    background-color: #1c1f24 !important;
+  }
+
+  .theme-auto .schema-list,
+  html.theme-auto .schema-list,
+  body.theme-auto .schema-list {
+    background-color: #1c1f24 !important;
+    border-right: 1px solid #383f4a !important;
+  }
+
+  .theme-auto .container.tool-container,
+  html.theme-auto .container.tool-container,
+  body.theme-auto .container.tool-container {
+    background-color: #0f0f13 !important;
+  }
+}
+
+/* ========== 从 theme-dark.css 合并的样式 ========== */
+/**
+ * 合并的暗黑主题样式
+ * 该文件整合了多个分散的暗色主题CSS文件
+ */
+
+/* ----- 基础暗色主题设置 ----- */
+.theme-dark,
+html.theme-dark,
+body.theme-dark {
+  background-color: #1a1a1f !important;
+  color: #e6e6e6 !important;
+  background: #0f0f13 !important;
+}
+
+.theme-dark .app-container,
+html.theme-dark .app-container,
+body.theme-dark .app-container {
+  background-color: #0f0f13 !important;
+}
+
+/* ----- 布局组件 ----- */
+.theme-dark .schema-list,
+html.theme-dark .schema-list,
+body.theme-dark .schema-list {
+  background-color: #1c1f24 !important;
+  border-right-color: #383f4a !important;
+  color: #e6e6e6 !important;
+}
+
+.theme-dark .content,
+.theme-dark .group-container,
+html.theme-dark .content,
+html.theme-dark .group-container,
+body.theme-dark .content,
+body.theme-dark .group-container {
+  background-color: #1c1f24 !important;
+  color: #e6e6e6 !important;
+}
+
+.theme-dark .main-tool,
+html.theme-dark .main-tool,
+body.theme-dark .main-tool {
+  background-color: #0f0f13 !important;
+  border-left-color: #383f4a !important;
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.25) !important;
+}
+
+.theme-dark .search-bar,
+html.theme-dark .search-bar,
+body.theme-dark .search-bar {
+  background-color: #1c1f24 !important;
+  border-bottom-color: #383f4a !important;
+}
+
+.theme-dark .footer,
+html.theme-dark .footer,
+body.theme-dark .footer {
+  background-color: #1c1f24 !important;
+  border-top-color: #383f4a !important;
+  color: #e6e6e6 !important;
+}
+
+/* ----- 表单元素 ----- */
+.theme-dark .section-content,
+html.theme-dark .section-content,
+body.theme-dark .section-content {
+  background-color: #0f0f13 !important;
+  border-color: #383f4a !important;
+}
+
+/* 表单组 */
+.theme-dark .form-group input,
+html.theme-dark .form-group input,
+body.theme-dark .form-group input {
+  background-color: #1c1f24 !important;
+  border-color: #383f4a !important;
+  color: #e6e6e6 !important;
+}
+
+.theme-dark .form-group input:focus,
+html.theme-dark .form-group input:focus,
+body.theme-dark .form-group input:focus {
+  border-color: #81fffa !important;
+  box-shadow: 0 0 0 2px rgba(129, 255, 250, 0.25) !important;
+}
+
+.theme-dark .form-group label,
+html.theme-dark .form-group label,
+body.theme-dark .form-group label {
+  color: #e6e6e6 !important;
+}
+
+/* 复选项 */
+.theme-dark .check-item,
+html.theme-dark .check-item,
+body.theme-dark .check-item {
+  color: #e6e6e6 !important;
+}
+
+/* 使用auto主题模式的媒体查询 */
+@media (prefers-color-scheme: dark) {
+  .theme-auto,
+  html.theme-auto,
+  body.theme-auto {
+    background-color: #1a1a1f !important;
+    color: #e6e6e6 !important;
+    background: #0f0f13 !important;
+  }
+
+  .theme-auto .app-container,
+  html.theme-auto .app-container,
+  body.theme-auto .app-container {
+    background-color: #0f0f13 !important;
+  }
+
+  /* 布局组件 */
+  .theme-auto .schema-list,
+  html.theme-auto .schema-list,
+  body.theme-auto .schema-list {
+    background-color: #1c1f24 !important;
+    border-right-color: #383f4a !important;
+    color: #e6e6e6 !important;
+  }
+
+  .theme-auto .content,
+  .theme-auto .group-container,
+  html.theme-auto .content,
+  html.theme-auto .group-container,
+  body.theme-auto .content,
+  body.theme-auto .group-container {
+    background-color: #1c1f24 !important;
+    color: #e6e6e6 !important;
+  }
+
+  .theme-auto .main-tool,
+  html.theme-auto .main-tool,
+  body.theme-auto .main-tool {
+    background-color: #0f0f13 !important;
+    border-left-color: #383f4a !important;
+    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.25) !important;
+  }
+
+  .theme-auto .search-bar,
+  html.theme-auto .search-bar,
+  body.theme-auto .search-bar {
+    background-color: #1c1f24 !important;
+    border-bottom-color: #383f4a !important;
+  }
+
+  .theme-auto .footer,
+  html.theme-auto .footer,
+  body.theme-auto .footer {
+    background-color: #1c1f24 !important;
+    border-top-color: #383f4a !important;
+    color: #e6e6e6 !important;
+  }
+
+  /* 表单元素 */
+  .theme-auto .section-content,
+  html.theme-auto .section-content,
+  body.theme-auto .section-content {
+    background-color: #0f0f13 !important;
+    border-color: #383f4a !important;
+  }
+
+  /* 表单组 */
+  .theme-auto .form-group input,
+  html.theme-auto .form-group input,
+  body.theme-auto .form-group input {
+    background-color: #1c1f24 !important;
+    border-color: #383f4a !important;
+    color: #e6e6e6 !important;
+  }
+
+  .theme-auto .form-group input:focus,
+  html.theme-auto .form-group input:focus,
+  body.theme-auto .form-group input:focus {
+    border-color: #81fffa !important;
+    box-shadow: 0 0 0 2px rgba(129, 255, 250, 0.25) !important;
+  }
+
+  .theme-auto .form-group label,
+  html.theme-auto .form-group label,
+  body.theme-auto .form-group label {
+    color: #e6e6e6 !important;
+  }
+
+  /* 复选项 */
+  .theme-auto .check-item,
+  html.theme-auto .check-item,
+  body.theme-auto .check-item {
+    color: #e6e6e6 !important;
   }
 }
