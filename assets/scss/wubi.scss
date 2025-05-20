@@ -57,6 +57,7 @@ body{
   border-left: 1px solid $border-color-panel;
   flex-shrink: 0;
   width: 220px;
+  position: relative; /* 添加相对定位，便于使用伪元素 */
 }
 
 .backup-info{

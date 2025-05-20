@@ -107,11 +107,13 @@
     <!-- 重要提示 -->
     <div class="sync-warning">
         <div>⚠️每次使用前请先点击 <span style='color:#ffb300;font-weight:600;'>“下载到本地”</span> 按钮，关闭前请先点击 <span style='color:#2db67c;font-weight:600;'>“上传至Git”</span> 按钮，保持与远程仓库词库同步。<br> </div>
-    </div>
-    <!-- 自定义弹窗提示 -->
-    <div v-if="showDialog" class="custom-dialog-mask">
-        <div class="custom-dialog">
+    </div>    <!-- 自定义弹窗提示 -->
+    <div v-if="showDialog" class="custom-dialog-mask" @click="showDialog = false">
+        <div class="custom-dialog" @click.stop>
             <div class="custom-dialog-content">{{ dialogMsg }}</div>
+            <div class="custom-dialog-footer">
+                <button class="btn btn-primary" @click="showDialog = false">确定</button>
+            </div>
         </div>
     </div>
 

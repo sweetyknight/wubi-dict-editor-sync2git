@@ -181,38 +181,33 @@ const app = {
         // 获取并设置字典文件
         ipcRenderer.on('setDictMap', (event, fileContent, fileName, filePath) => {
             this.dictMap = new DictMap(null, fileContent)
-        })
-
-        // 监听上传/下载 Git 操作结果
+        })        // 监听上传/下载 Git 操作结果
         ipcRenderer.on('gitOperationResult', (event, msg) => {
             this.dialogMsg = msg
             this.showDialog = true
-            setTimeout(() => {
-                this.showDialog = false
-            }, 3000)
+            // 移除自动关闭弹窗的定时器，改为由用户点击关闭
         })
 
         // 监听远程文件夹创建确认请求
         ipcRenderer.on('confirmCreateRemoteFolder', (event, folder) => {
-            this.dialogMsg = `远程文件夹 “${folder}” 不存在，是否创建？`
+            this.dialogMsg = `远程文件夹 "${folder}" 不存在，是否创建？`
             this.showDialog = true
             // 提供确认/取消按钮
             this.$nextTick(() => {
                 // 动态插入按钮
-                let dialog = document.querySelector('.custom-dialog') || document.body;
+                let dialog = document.querySelector('.custom-dialog-footer') || document.body;
+                dialog.innerHTML = ''; // 清空原有内容
                 let btns = document.createElement('div');
-                btns.style = 'margin-top:16px;text-align:center;';
-                btns.innerHTML = `<button id="btn-confirm-create-folder" class="btn btn-primary" style="margin-right:18px;">确认创建</button><button id="btn-cancel-create-folder" class="btn btn-orange">取消</button>`;
+                btns.style = 'display:flex;justify-content:center;gap:18px;';
+                btns.innerHTML = `<button id="btn-confirm-create-folder" class="btn btn-primary">确认创建</button><button id="btn-cancel-create-folder" class="btn btn-orange">取消</button>`;
                 dialog.appendChild(btns);
                 document.getElementById('btn-confirm-create-folder').onclick = () => {
                     ipcRenderer.send('confirmCreateRemoteFolderResult', true);
                     this.showDialog = false;
-                    btns.remove();
                 };
                 document.getElementById('btn-cancel-create-folder').onclick = () => {
                     ipcRenderer.send('confirmCreateRemoteFolderResult', false);
                     this.showDialog = false;
-                    btns.remove();
                 };
             });
         })
@@ -1086,40 +1081,34 @@ const app = {
                 wordsSelected = this.dict.wordsOrigin.filter(item => this.chosenWordIds.has(item.id))
             }
             ipcRenderer.send('MainWindow:ExportSelectionToPlistFile', wordsSelected)
-        },
-
-        // 上传当前码表到 git
+        },        // 上传当前码表到 git
         async uploadToGit() {
             // 上传前先比对本地和远程内容
             const res = await ipcRenderer.invoke('checkDictsDiff', 'upload')
             if (res && res.same) {
                 this.dialogMsg = '本地词库与远程仓库一致，无需上传';
                 this.showDialog = true;
-                setTimeout(() => { this.showDialog = false }, 3000);
+                // 移除自动关闭定时器，改为点击关闭
                 return;
             }
             // 提示用户同步操作
             this.dialogMsg = '正在同步词典文件...';
             this.showDialog = true;
-            setTimeout(() => { this.showDialog = false }, 1000);
             
             ipcRenderer.send('uploadToGit');
-        },
-
-        // 下载当前码表到 git
+        },        // 下载当前码表到 git
         async downloadFromGit() {
             // 下载前先比对本地和远程内容
             const res = await ipcRenderer.invoke('checkDictsDiff', 'download')
             if (res && res.same) {
                 this.dialogMsg = '本地词库与远程仓库一致，无需下载';
                 this.showDialog = true;
-                setTimeout(() => { this.showDialog = false }, 3000);
+                // 移除自动关闭定时器，改为点击关闭
                 return;
             }
             // 提示用户同步操作
             this.dialogMsg = '正在同步词典文件...';
             this.showDialog = true;
-            setTimeout(() => { this.showDialog = false }, 1000);
             
             ipcRenderer.send('downloadFromGit');
         }
