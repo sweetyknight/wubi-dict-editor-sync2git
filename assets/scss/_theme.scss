@@ -499,7 +499,6 @@ $black-color-main: #81fffa;
     }
   }
 
-
   /*TOOL*/
   .tool-container, .tool{
     background-color: $black-bg;
@@ -508,9 +507,21 @@ $black-color-main: #81fffa;
       background-color: $black-bg !important;
       .title{
         color: $black-color-text;
+        &.green {
+          color: #4CD964 !important;
+        }
+        &.roseo {
+          color: #FF2D70 !important;
+        }
+        &.blue {
+          color: $black-color-main !important;
+        }
       }
       .content{
         background-color: $black-body-bg;
+      }
+      .tip{
+        color: $black-color-text !important;
       }
 
       &::-webkit-scrollbar-thumb {
@@ -537,6 +548,36 @@ $black-color-main: #81fffa;
       }
     }
   }
+}
+
+/* 只影响 tool.html 的暗黑模式 */
+.tool.theme-dark .tool-panel {
+  background-color: #1c1f24 !important;
+}
+.tool.theme-dark .tool-panel .content {
+  background-color: #0f0f13 !important;
+}
+.tool.theme-dark .tool-panel section .title {
+  color: #e6e6e6 !important;
+}
+.tool.theme-dark .tool-panel section .title.green {
+  color: #4CD964 !important;
+}
+.tool.theme-dark .tool-panel section .title.roseo {
+  color: #FF2D70 !important;
+}
+.tool.theme-dark .tool-panel section .title.blue {
+  color: #81fffa !important;
+}
+.tool.theme-dark .tool-panel .tip {
+  color: #e6e6e6 !important;
+}
+
+body.theme-dark .sync-warning {
+  background: #23232b !important;
+  color: #ffe082 !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+  border: 1px solid #333;
 }
 
 // 美化 sync-warning（所有页面通用，tool页面dark样式由tool-dark控制）
@@ -620,6 +661,28 @@ body.theme-auto,
 html.theme-auto body {
   @media (prefers-color-scheme: dark) {
     @include dark-mode();
+    /* 只影响 tool.html 的自动暗黑模式 */
+    .tool.theme-auto .tool-panel {
+      background-color: #1c1f24 !important;
+    }
+    .tool.theme-auto .tool-panel .content {
+      background-color: #0f0f13 !important;
+    }
+    .tool.theme-auto .tool-panel section .title {
+      color: #e6e6e6 !important;
+    }
+    .tool.theme-auto .tool-panel section .title.green {
+      color: #4CD964 !important;
+    }
+    .tool.theme-auto .tool-panel section .title.roseo {
+      color: #FF2D70 !important;
+    }
+    .tool.theme-auto .tool-panel section .title.blue {
+      color: #81fffa !important;
+    }
+    .tool.theme-auto .tool-panel .tip {
+      color: #e6e6e6 !important;
+    }
   }
 }
 

@@ -2029,6 +2029,42 @@ hr {
   min-width: 60px;
 }
 
+/* 只影响 tool.html 的暗黑模式 */
+.tool.theme-dark .tool-panel {
+  background-color: #1c1f24 !important;
+}
+
+.tool.theme-dark .tool-panel .content {
+  background-color: #0f0f13 !important;
+}
+
+.tool.theme-dark .tool-panel section .title {
+  color: #e6e6e6 !important;
+}
+
+.tool.theme-dark .tool-panel section .title.green {
+  color: #4CD964 !important;
+}
+
+.tool.theme-dark .tool-panel section .title.roseo {
+  color: #FF2D70 !important;
+}
+
+.tool.theme-dark .tool-panel section .title.blue {
+  color: #81fffa !important;
+}
+
+.tool.theme-dark .tool-panel .tip {
+  color: #e6e6e6 !important;
+}
+
+body.theme-dark .sync-warning {
+  background: #23232b !important;
+  color: #ffe082 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+  border: 1px solid #333;
+}
+
 .sync-warning {
   margin: 0px auto 0px auto;
   padding: 12px 18px;
@@ -3333,6 +3369,33 @@ html.theme-dark body .tool-container .tool-panel .title,
 html.theme-dark body .tool .tool-panel .title {
   color: rgb(229.5, 229.5, 229.5);
 }
+.theme-dark .tool-container .tool-panel .title.green, .theme-dark .tool .tool-panel .title.green,
+html.theme-dark .tool-container .tool-panel .title.green,
+html.theme-dark .tool .tool-panel .title.green,
+body.theme-dark .tool-container .tool-panel .title.green,
+body.theme-dark .tool .tool-panel .title.green,
+html.theme-dark body .tool-container .tool-panel .title.green,
+html.theme-dark body .tool .tool-panel .title.green {
+  color: #4CD964 !important;
+}
+.theme-dark .tool-container .tool-panel .title.roseo, .theme-dark .tool .tool-panel .title.roseo,
+html.theme-dark .tool-container .tool-panel .title.roseo,
+html.theme-dark .tool .tool-panel .title.roseo,
+body.theme-dark .tool-container .tool-panel .title.roseo,
+body.theme-dark .tool .tool-panel .title.roseo,
+html.theme-dark body .tool-container .tool-panel .title.roseo,
+html.theme-dark body .tool .tool-panel .title.roseo {
+  color: #FF2D70 !important;
+}
+.theme-dark .tool-container .tool-panel .title.blue, .theme-dark .tool .tool-panel .title.blue,
+html.theme-dark .tool-container .tool-panel .title.blue,
+html.theme-dark .tool .tool-panel .title.blue,
+body.theme-dark .tool-container .tool-panel .title.blue,
+body.theme-dark .tool .tool-panel .title.blue,
+html.theme-dark body .tool-container .tool-panel .title.blue,
+html.theme-dark body .tool .tool-panel .title.blue {
+  color: #81fffa !important;
+}
 .theme-dark .tool-container .tool-panel .content, .theme-dark .tool .tool-panel .content,
 html.theme-dark .tool-container .tool-panel .content,
 html.theme-dark .tool .tool-panel .content,
@@ -3341,6 +3404,15 @@ body.theme-dark .tool .tool-panel .content,
 html.theme-dark body .tool-container .tool-panel .content,
 html.theme-dark body .tool .tool-panel .content {
   background-color: #0f0f13;
+}
+.theme-dark .tool-container .tool-panel .tip, .theme-dark .tool .tool-panel .tip,
+html.theme-dark .tool-container .tool-panel .tip,
+html.theme-dark .tool .tool-panel .tip,
+body.theme-dark .tool-container .tool-panel .tip,
+body.theme-dark .tool .tool-panel .tip,
+html.theme-dark body .tool-container .tool-panel .tip,
+html.theme-dark body .tool .tool-panel .tip {
+  color: rgb(229.5, 229.5, 229.5) !important;
 }
 .theme-dark .tool-container .tool-panel::-webkit-scrollbar-thumb, .theme-dark .tool .tool-panel::-webkit-scrollbar-thumb,
 html.theme-dark .tool-container .tool-panel::-webkit-scrollbar-thumb,
@@ -3397,6 +3469,7 @@ html.theme-dark body .tool .readme .readme-item p i {
     /*CONFIG*/
     /*BUTTONS*/
     /*TOOL*/
+    /* 只影响 tool.html 的自动暗黑模式 */
   }
   .theme-auto .radio-list .radio-list-item.active,
   html.theme-auto .radio-list .radio-list-item.active,
@@ -4622,6 +4695,33 @@ html.theme-dark body .tool .readme .readme-item p i {
   html.theme-auto body .tool .tool-panel .title {
     color: rgb(229.5, 229.5, 229.5);
   }
+  .theme-auto .tool-container .tool-panel .title.green, .theme-auto .tool .tool-panel .title.green,
+  html.theme-auto .tool-container .tool-panel .title.green,
+  html.theme-auto .tool .tool-panel .title.green,
+  body.theme-auto .tool-container .tool-panel .title.green,
+  body.theme-auto .tool .tool-panel .title.green,
+  html.theme-auto body .tool-container .tool-panel .title.green,
+  html.theme-auto body .tool .tool-panel .title.green {
+    color: #4CD964 !important;
+  }
+  .theme-auto .tool-container .tool-panel .title.roseo, .theme-auto .tool .tool-panel .title.roseo,
+  html.theme-auto .tool-container .tool-panel .title.roseo,
+  html.theme-auto .tool .tool-panel .title.roseo,
+  body.theme-auto .tool-container .tool-panel .title.roseo,
+  body.theme-auto .tool .tool-panel .title.roseo,
+  html.theme-auto body .tool-container .tool-panel .title.roseo,
+  html.theme-auto body .tool .tool-panel .title.roseo {
+    color: #FF2D70 !important;
+  }
+  .theme-auto .tool-container .tool-panel .title.blue, .theme-auto .tool .tool-panel .title.blue,
+  html.theme-auto .tool-container .tool-panel .title.blue,
+  html.theme-auto .tool .tool-panel .title.blue,
+  body.theme-auto .tool-container .tool-panel .title.blue,
+  body.theme-auto .tool .tool-panel .title.blue,
+  html.theme-auto body .tool-container .tool-panel .title.blue,
+  html.theme-auto body .tool .tool-panel .title.blue {
+    color: #81fffa !important;
+  }
   .theme-auto .tool-container .tool-panel .content, .theme-auto .tool .tool-panel .content,
   html.theme-auto .tool-container .tool-panel .content,
   html.theme-auto .tool .tool-panel .content,
@@ -4630,6 +4730,15 @@ html.theme-dark body .tool .readme .readme-item p i {
   html.theme-auto body .tool-container .tool-panel .content,
   html.theme-auto body .tool .tool-panel .content {
     background-color: #0f0f13;
+  }
+  .theme-auto .tool-container .tool-panel .tip, .theme-auto .tool .tool-panel .tip,
+  html.theme-auto .tool-container .tool-panel .tip,
+  html.theme-auto .tool .tool-panel .tip,
+  body.theme-auto .tool-container .tool-panel .tip,
+  body.theme-auto .tool .tool-panel .tip,
+  html.theme-auto body .tool-container .tool-panel .tip,
+  html.theme-auto body .tool .tool-panel .tip {
+    color: rgb(229.5, 229.5, 229.5) !important;
   }
   .theme-auto .tool-container .tool-panel::-webkit-scrollbar-thumb, .theme-auto .tool .tool-panel::-webkit-scrollbar-thumb,
   html.theme-auto .tool-container .tool-panel::-webkit-scrollbar-thumb,
@@ -4676,6 +4785,48 @@ html.theme-dark body .tool .readme .readme-item p i {
   html.theme-auto body .tool-container .readme .readme-item p i,
   html.theme-auto body .tool .readme .readme-item p i {
     color: #81fffa;
+  }
+  .theme-auto .tool.theme-auto .tool-panel,
+  html.theme-auto .tool.theme-auto .tool-panel,
+  body.theme-auto .tool.theme-auto .tool-panel,
+  html.theme-auto body .tool.theme-auto .tool-panel {
+    background-color: #1c1f24 !important;
+  }
+  .theme-auto .tool.theme-auto .tool-panel .content,
+  html.theme-auto .tool.theme-auto .tool-panel .content,
+  body.theme-auto .tool.theme-auto .tool-panel .content,
+  html.theme-auto body .tool.theme-auto .tool-panel .content {
+    background-color: #0f0f13 !important;
+  }
+  .theme-auto .tool.theme-auto .tool-panel section .title,
+  html.theme-auto .tool.theme-auto .tool-panel section .title,
+  body.theme-auto .tool.theme-auto .tool-panel section .title,
+  html.theme-auto body .tool.theme-auto .tool-panel section .title {
+    color: #e6e6e6 !important;
+  }
+  .theme-auto .tool.theme-auto .tool-panel section .title.green,
+  html.theme-auto .tool.theme-auto .tool-panel section .title.green,
+  body.theme-auto .tool.theme-auto .tool-panel section .title.green,
+  html.theme-auto body .tool.theme-auto .tool-panel section .title.green {
+    color: #4CD964 !important;
+  }
+  .theme-auto .tool.theme-auto .tool-panel section .title.roseo,
+  html.theme-auto .tool.theme-auto .tool-panel section .title.roseo,
+  body.theme-auto .tool.theme-auto .tool-panel section .title.roseo,
+  html.theme-auto body .tool.theme-auto .tool-panel section .title.roseo {
+    color: #FF2D70 !important;
+  }
+  .theme-auto .tool.theme-auto .tool-panel section .title.blue,
+  html.theme-auto .tool.theme-auto .tool-panel section .title.blue,
+  body.theme-auto .tool.theme-auto .tool-panel section .title.blue,
+  html.theme-auto body .tool.theme-auto .tool-panel section .title.blue {
+    color: #81fffa !important;
+  }
+  .theme-auto .tool.theme-auto .tool-panel .tip,
+  html.theme-auto .tool.theme-auto .tool-panel .tip,
+  body.theme-auto .tool.theme-auto .tool-panel .tip,
+  html.theme-auto body .tool.theme-auto .tool-panel .tip {
+    color: #e6e6e6 !important;
   }
 }
 
