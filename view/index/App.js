@@ -134,23 +134,37 @@ const app = {
             // request for file list
             ipcRenderer.send('GetFileList')
         })
-        ipcRenderer.send('MainWindow:RequestConfigFile')
-
-
-        // 监听获取的文件列表
+        ipcRenderer.send('MainWindow:RequestConfigFile')        // 监听获取的文件列表
         // 由 window 触发获取文件目录的请求，不然无法实现适时的获取到 主进程返回的数据
         ipcRenderer.on('FileList', (event, fileList) => {
             // 此时已经存在  config 了
-            // 更新文件列表
+            // 更新文件列表，同时保留配置中的外部文件
             if (this.config.fileNameList && this.config.fileNameList.length > 0){
+                // 创建文件路径到名称的映射
                 let fileNameMap = new Map()
                 this.config.fileNameList.forEach(fileNamePair => {
                     fileNameMap.set(fileNamePair.path, fileNamePair.name)
                 })
-                this.dropdownFileList = fileList.map(fileNameListItem => {
+                
+                // 创建一个合并列表，包含fileList和配置中的文件（去重）
+                let mergedFiles = [...fileList]
+                
+                // 添加配置中存在但不在fileList中的文件（外部文件）
+                this.config.fileNameList.forEach(configFile => {
+                    const exists = mergedFiles.some(file => file.path === configFile.path)
+                    if (!exists) {
+                        mergedFiles.push({
+                            name: configFile.name,
+                            path: configFile.path
+                        })
+                    }
+                })
+                
+                // 使用映射中的自定义名称，如果有的话
+                this.dropdownFileList = mergedFiles.map(fileItem => {
                     return {
-                        name: fileNameMap.get(fileNameListItem.path) || fileNameListItem.name,
-                        path: fileNameListItem.path
+                        name: fileNameMap.get(fileItem.path) || fileItem.name,
+                        path: fileItem.path
                     }
                 }).sort((a,b) => a.name > b.name ? 1:-1)
             } else {

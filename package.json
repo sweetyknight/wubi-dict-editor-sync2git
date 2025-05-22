@@ -1,1 +1,80 @@
-{"name":"wubi-dict-editor-sync2git","version":"1.0.0","private":true,"author":{"name":"KyleBing"},"date":"2024-05-18","dateInit":"2025-05-18","description":"五笔码表管理工具-GitHub同步版","main":"main.js","scripts":{"start":"electron-forge start","start:win":"chcp 65001 >NUL && set LANG=zh_CN.UTF-8 && electron-forge start","package":"electron-forge package","make":"electron-forge make"},"dependencies":{"@octokit/core":"^6.1.5","axios":"^1.2.1","build-css":"^0.2.0","electron-squirrel-startup":"^1.0.0","iconv-lite":"^0.6.3","plist":"^3.0.4","simple-git":"^3.27.0","vue":"^2.6.14","vue-virtual-scroller":"^1.1.2"},"devDependencies":{"@electron-forge/cli":"^6.1.1","@electron-forge/maker-deb":"^6.1.1","@electron-forge/maker-dmg":"^6.1.1","@electron-forge/maker-rpm":"^6.1.1","@electron-forge/maker-squirrel":"^6.1.1","@electron-forge/maker-zip":"^6.1.1","electron":"^24.3.1"},"config":{"forge":{"packagerConfig":{"appVersion":"1.0.0","name":"五笔码表助手","appCopyright":"","icon":"./assets/img/appIcon/appicon","win32metadata":{"ProductName":"五笔码表助手","FileDescription":"五笔码表助手 for 小狼毫"}},"makers":[{"name":"@electron-forge/maker-squirrel","config":{"name":"WubiDictEditor"}},{"name":"@electron-forge/maker-dmg","config":{"background":"./assets/img/tool_panel_open.png"}},{"name":"@electron-forge/maker-zip","platforms":["darwin"]},{"name":"@electron-forge/maker-deb","config":{}},{"name":"@electron-forge/maker-rpm","config":{}}]}}}
+{
+    "name": "wubi-dict-editor-sync2git",
+    "version": "1.0.0",
+    "private": true,
+    "author": {
+        "name": "KyleBing"
+    },
+    "date": "2024-05-18",
+    "dateInit": "2025-05-18",
+    "description": "五笔码表管理工具-GitHub同步版",
+    "main": "main.js",
+    "scripts": {
+        "start": "electron-forge start",
+        "start:win": "chcp 65001 >NUL && set LANG=zh_CN.UTF-8 && electron-forge start",
+        "package": "electron-forge package",
+        "make": "electron-forge make"
+    },
+    "dependencies": {
+        "@octokit/core": "^6.1.5",
+        "axios": "^1.2.1",
+        "build-css": "^0.2.0",
+        "electron-squirrel-startup": "^1.0.0",
+        "iconv-lite": "^0.6.3",
+        "plist": "^3.0.4",
+        "simple-git": "^3.27.0",
+        "vue": "^2.6.14",
+        "vue-virtual-scroller": "^1.1.2"
+    },
+    "devDependencies": {
+        "@electron-forge/cli": "^6.1.1",
+        "@electron-forge/maker-deb": "^6.1.1",
+        "@electron-forge/maker-dmg": "^6.1.1",
+        "@electron-forge/maker-rpm": "^6.1.1",
+        "@electron-forge/maker-squirrel": "^6.1.1",
+        "@electron-forge/maker-zip": "^6.1.1",
+        "electron": "^24.3.1"
+    },
+    "config": {
+        "forge": {
+            "packagerConfig": {
+                "appVersion": "1.0.0",
+                "name": "五笔码表助手",
+                "appCopyright": "",
+                "icon": "./assets/img/appIcon/appicon",
+                "win32metadata": {
+                    "ProductName": "五笔码表助手",
+                    "FileDescription": "五笔码表助手 for 小狼毫"
+                }
+            },
+            "makers": [
+                {
+                    "name": "@electron-forge/maker-squirrel",
+                    "config": {
+                        "name": "WubiDictEditor"
+                    }
+                },
+                {
+                    "name": "@electron-forge/maker-dmg",
+                    "config": {
+                        "background": "./assets/img/tool_panel_open.png"
+                    }
+                },
+                {
+                    "name": "@electron-forge/maker-zip",
+                    "platforms": [
+                        "darwin"
+                    ]
+                },
+                {
+                    "name": "@electron-forge/maker-deb",
+                    "config": {}
+                },
+                {
+                    "name": "@electron-forge/maker-rpm",
+                    "config": {}
+                }
+            ]
+        }
+    }
+}

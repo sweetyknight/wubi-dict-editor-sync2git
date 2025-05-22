@@ -12,6 +12,8 @@ const app = {
         return {
             config: DEFAULT_CONFIG,
             dictMapContent: '', // 字典文件内容
+            showDialog: false,  // 控制弹窗显示
+            dialogMsg: '',      // 弹窗内容
         }
     },
     mounted() {
@@ -77,11 +79,39 @@ const app = {
         // 选取 rime 程序目录后保存
         ipcRenderer.on('ConfigWindow:ChosenRimeExecDir', (event, dir) => {
             this.config.rimeExecDir = dir[0]
-        })
-
-        // 字典文件保存后
+        })        // 字典文件保存后
         ipcRenderer.on('ConfigWindow:SaveDictMapSuccess', () => {
             this.config.hasSetDictMap = true
+        })
+        
+        // 文件读取错误处理
+        ipcRenderer.on('ConfigWindow:DictFileError', (event, filePath, errorMsg) => {
+            this.dialogMsg = `无法读取文件: ${filePath}\n\n错误: ${errorMsg}`;
+            this.showDialog = true;
+        })
+        
+        // 选择词典文件后的回调
+        ipcRenderer.on('ConfigWindow:ChosenDictFiles', (event, dictFiles) => {
+            if (dictFiles && dictFiles.length > 0) {
+                // 将新选择的文件添加到fileNameList
+                if (!this.config.fileNameList) {
+                    this.config.fileNameList = [];
+                }
+                
+                // 合并文件，避免重复
+                dictFiles.forEach(file => {
+                    // 检查是否已存在此文件
+                    const exists = this.config.fileNameList.some(existingFile => 
+                        existingFile.path === file.path);
+                    
+                    if (!exists) {
+                        this.config.fileNameList.push(file);
+                    }
+                });
+                
+                // 手动触发保存配置
+                ipcRenderer.send('ConfigWindow:RequestSaveConfig', JSON.stringify(this.config, null, 2));
+            }
         })
 
         // 读取字典文件的内容
@@ -125,6 +155,33 @@ const app = {
         },
         removeSyncFile(idx) {
             this.config.syncDictFiles.splice(idx, 1)
+        },
+        // 加载默认词典文件列表
+        loadDefaultDictFiles() {
+            // 默认词典文件列表，与getLabelNameFromFileName中的映射保持一致
+            const defaultFiles = [
+                { name: "极点主表", path: "wubi86_jidian.dict.yaml" },
+                { name: "❤ 用户词库", path: "wubi86_jidian_user.dict.yaml" },
+                { name: "iOS仓", path: "wubi86_jidian_user_hamster.dict.yaml" },
+                { name: "分类词库", path: "wubi86_jidian_extra.dict.yaml" },
+                { name: "扩展-行政区域", path: "wubi86_jidian_extra_district.dict.yaml" },
+                { name: "pīnyīn 词库", path: "pinyin_simp.dict.yaml" }
+            ];
+            
+            // 只替换fileNameList，不影响其他配置
+            this.$set(this.config, 'fileNameList', defaultFiles);
+        },        // 移除词典文件
+        removeFile(index) {
+            if (this.config.fileNameList) {
+                this.config.fileNameList.splice(index, 1);
+                // 手动触发保存配置
+                ipcRenderer.send('ConfigWindow:RequestSaveConfig', JSON.stringify(this.config, null, 2));
+            }
+        },
+        // 选择词典文件
+        chooseDictFiles() {
+            // 让主进程弹出文件选择器，初始目录为rimeHomeDir
+            ipcRenderer.send('ConfigWindow:ChooseDictFiles', this.config.rimeHomeDir);
         },
         setInitFile(file){
             this.config.initFileName = file.path

@@ -2,10 +2,65 @@
 <html lang="zh-CN" :class="{'theme-dark': config && config.theme === 'black', 'theme-auto': config && config.theme === 'auto'}">
 <head>
     <meta charset="UTF-8">    <title>五笔码表助手配置</title>    <link rel="stylesheet" href="../../assets/scss/wubi.css">
+    <style>
+        /* 自定义弹窗样式 */
+        .custom-dialog-mask {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .custom-dialog {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+            width: 400px;
+            max-width: 90%;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .custom-dialog-content {
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #333;
+        }
+        
+        .custom-dialog-footer {
+            display: flex;
+            justify-content: center;
+        }
+        
+        /* 暗色主题适配 */
+        html.theme-dark .custom-dialog {
+            background-color: #1c1f24;
+            color: #e0e0e0;
+        }
+        
+        html.theme-dark .custom-dialog-content {
+            color: #e0e0e0;
+        }
+    </style>
 </head>
 <body class="config" :class="{'theme-dark': config && config.theme === 'black', 'theme-auto': config && config.theme === 'auto'}">
 
 <div v-cloak id="app" class="container">
+    <!-- 自定义弹窗提示 -->
+    <div v-if="showDialog" class="custom-dialog-mask" @click="showDialog = false">
+        <div class="custom-dialog" @click.stop>
+            <div class="custom-dialog-content">{{ dialogMsg }}</div>
+            <div class="custom-dialog-footer">
+                <button class="btn btn-primary" @click="showDialog = false">确定</button>
+            </div>
+        </div>
+    </div>
 
     <section v-if="config && config.fileNameList">
         <div class="section-title">
@@ -25,21 +80,24 @@
                 </div>
             </div>
         </div>
-    </section>
-
-    <section v-if="config && config.fileNameList">
+    </section>    <section v-if="config && config.fileNameList">
         <div class="section-title">
             <h3>2. 命名码表文件</h3>
-            <div class="desc">个性化配置文件名称，修改后，请重启软件</div>
+            <div class="desc">可添加码表、个性化配置文件名称</div>
         </div>
         <div class="section-content">
-            <div class="rename-file-list">
-                <div
+            <div style="display:flex;align-items:center;gap:16px;margin-bottom:10px;">
+                <button class="btn btn-primary" @click="loadDefaultDictFiles" style="min-width:90px;background:#2db67c;border:none;">默认</button>
+                <button class="btn btn-orange" @click="chooseDictFiles" style="min-width:90px;background:#ffb300;border:none;">选择</button>
+                <span style="color:#888;font-size:13px;">（命名码表文件）</span>
+            </div>
+            <div class="rename-file-list">                <div
                     class="rename-file-list-item"
                     v-for="(file, index) in config.fileNameList" :key="index"
                     v-if="config.fileNameList">
                     <input v-model="file.name"/>
                     <div class="filepath">{{ file.path }}</div>
+                    <span class="remove-x" @click="removeFile(index)" title="移除" style="margin-right:4px;">×</span>
                 </div>
             </div>
         </div>

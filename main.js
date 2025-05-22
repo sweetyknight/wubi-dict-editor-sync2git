@@ -128,7 +128,25 @@ function createMainWindow() {
         //     mainWindow.webContents.send('gitOperationResult', `注意：您正在修改主表 ${mainDictFileName}，请谨慎操作`);
         // }
         
-        fs.writeFile(path.join(getRimeConfigDir(), filename), yamlString, {encoding: "utf8"}, err => {
+        // 检查文件是否为外部文件（绝对路径）
+        const config = readConfigFile();
+        let filePath;
+        
+        if (config && config.fileNameList) {
+            // 查找匹配的文件配置项
+            const configFile = config.fileNameList.find(file => file.path === filename);
+            
+            // 判断是否为外部绝对路径文件
+            if (configFile && configFile.path.includes(':\\')) {
+                filePath = configFile.path; // 直接使用绝对路径
+            } else {
+                filePath = path.join(getRimeConfigDir(), filename); // 使用Rime目录中的相对路径
+            }
+        } else {
+            filePath = path.join(getRimeConfigDir(), filename); // 默认使用Rime目录
+        }
+        
+        fs.writeFile(filePath, yamlString, {encoding: "utf8"}, err => {
             if (!err) {
                 console.log('saveFileSuccess')
                 try {
@@ -152,42 +170,79 @@ function createMainWindow() {
     ipcMain.removeAllListeners('loadDictFile');
     ipcMain.on('loadDictFile', (event, filename) => {
         readFileFromConfigDir(filename)
-    })
-
-    // 监听载入次文件内容的请求
+    })    // 监听载入次文件内容的请求
     ipcMain.removeAllListeners('MainWindow:LoadSecondDict');
     ipcMain.on('MainWindow:LoadSecondDict', (event, filename) => {
-        let filePath = path.join(getRimeConfigDir(), filename)
+        const config = readConfigFile();
+        let filePath;
+        
+        // 检查文件是否为外部文件（绝对路径）
+        if (config && config.fileNameList) {
+            const configFile = config.fileNameList.find(file => file.path === filename);
+            if (configFile && configFile.path.includes(':\\')) {
+                filePath = configFile.path; // 直接使用外部绝对路径
+            } else {
+                filePath = path.join(getRimeConfigDir(), filename); // 使用Rime目录
+            }
+        } else {
+            filePath = path.join(getRimeConfigDir(), filename); // 默认使用Rime目录
+        }
+        
         fs.readFile(filePath, {encoding: 'utf-8'}, (err, res) => {
             if (err) {
-                console.log(err)
+                console.log('读取次文件失败:', err)
             } else {
                 mainWindow.webContents.send('setTargetDict', filename, filePath, res)
             }
         })
-    })
-
-    // 监听载入主文件内容的请求
+    })    // 监听载入主文件内容的请求
     ipcMain.removeAllListeners('loadMainDict');
     ipcMain.on('loadMainDict', () => {
         let config = readConfigFile()
         let mainDictFileName = config.mainDictFileName || DEFAULT_CONFIG.mainDictFileName
-        fs.readFile(path.join(getRimeConfigDir(), mainDictFileName), {encoding: 'utf-8'}, (err, res) => {
-            if (err) {
-                console.log(err)
+        
+        // 检查主词典是否为外部文件（绝对路径）
+        let filePath;
+        if (config && config.fileNameList) {
+            const configFile = config.fileNameList.find(file => file.path === mainDictFileName);
+            if (configFile && configFile.path.includes(':\\')) {
+                filePath = configFile.path; // 使用外部绝对路径
             } else {
-                mainWindow.webContents.send('setMainDict', path.join(getRimeConfigDir(), mainDictFileName), res)
+                filePath = path.join(getRimeConfigDir(), mainDictFileName); // 使用Rime目录相对路径
+            }
+        } else {
+            filePath = path.join(getRimeConfigDir(), mainDictFileName); // 默认使用Rime目录
+        }
+        
+        fs.readFile(filePath, {encoding: 'utf-8'}, (err, res) => {
+            if (err) {
+                console.log('读取主码表失败:', err)
+            } else {
+                mainWindow.webContents.send('setMainDict', filePath, res)
             }
         })
-    })
-
-    // 外部打开当前码表文件
+    })// 外部打开当前码表文件
     ipcMain.removeAllListeners('openFileOutside');
     ipcMain.on('openFileOutside', (event, filename) => {
-        shell.openPath(path.join(getRimeConfigDir(), filename)).then(res => {
+        const config = readConfigFile();
+        let filePath;
+        
+        // 检查文件是否为外部文件（绝对路径）
+        if (config && config.fileNameList) {
+            const configFile = config.fileNameList.find(file => file.path === filename);
+            if (configFile && configFile.path.includes(':\\')) {
+                filePath = configFile.path; // 使用外部绝对路径
+            } else {
+                filePath = path.join(getRimeConfigDir(), filename); // 使用Rime目录相对路径
+            }
+        } else {
+            filePath = path.join(getRimeConfigDir(), filename); // 默认使用Rime目录
+        }
+        
+        shell.openPath(filePath).then(res => {
             console.log(res)
         }).catch(err => {
-            console.log(err)
+            console.log('打开文件失败:', err)
         })
     })
     ipcMain.removeAllListeners('GetFileList');
@@ -605,6 +660,49 @@ function createConfigWindow() {
         if (rimeExecDir) {
             configWindow.send('ConfigWindow:ChosenRimeExecDir', rimeExecDir)
         }
+    })    // 选择码表文件
+    ipcMain.on('ConfigWindow:ChooseDictFiles', (event, rimeHomeDir) => {
+        // 使用提供的rimeHomeDir路径，如果没有则使用默认路径
+        const defaultPath = rimeHomeDir || getRimeConfigDir();
+        let dictFilePaths = dialog.showOpenDialogSync(configWindow, {
+            defaultPath: defaultPath,
+            properties: ['openFile', 'multiSelections'],
+            filters: [{ name: 'YAML Files', extensions: ['yaml'] }]
+        });
+        
+        if (dictFilePaths && dictFilePaths.length > 0) {
+            // 获取文件名列表，添加到config.fileNameList
+            const dictFiles = [];
+            
+            for (const filePath of dictFilePaths) {
+                const fileName = path.basename(filePath);
+                
+                // 验证文件是否可读，并且是否是词典文件（文件名以dict.yaml结尾）
+                try {
+                    // 尝试读取文件，检查是否可访问
+                    fs.accessSync(filePath, fs.constants.R_OK);
+                    
+                    // 检查文件名是否是词典文件（是否以dict.yaml结尾）
+                    if (fileName.endsWith('dict.yaml')) {
+                        // 文件可读且是有效的词典文件，添加到列表
+                        dictFiles.push({
+                            name: getLabelNameFromFileName(fileName),
+                            path: filePath.includes(':\\') ? filePath : fileName // 保存完整路径或文件名
+                        });
+                    } else {
+                        // 文件不是词典文件，发送错误消息
+                        configWindow.send('ConfigWindow:DictFileError', filePath, '不是有效的词典文件');
+                    }
+                } catch (err) {
+                    // 文件不可读，发送错误消息
+                    configWindow.send('ConfigWindow:DictFileError', filePath, err.message);
+                }
+            }
+            
+            if (dictFiles.length > 0) {
+                configWindow.send('ConfigWindow:ChosenDictFiles', dictFiles);
+            }
+        }
     })
 
     // 选取编码字典文件
@@ -783,16 +881,94 @@ app.on('activate', function () {
 
 // 读取文件 从配置文件目录
 function readFileFromConfigDir(fileName, responseWindow) {
+    let config = readConfigFile()
     let rimeHomeDir = getRimeConfigDir()
-    let filePath = path.join(rimeHomeDir, fileName)
+    
+    // 检查文件是否位于外部目录
+    let isExternalFile = false
+    let externalPath = null
+    
+    if (config && config.fileNameList) {
+        const configFile = config.fileNameList.find(file => file.path === fileName)
+        if (configFile && configFile.path.includes(':\\')) {
+            // 这是一个绝对路径的外部文件
+            isExternalFile = true
+            externalPath = configFile.path
+        }
+    }
+      // 确定文件路径
+    let filePath = isExternalFile ? externalPath : path.join(rimeHomeDir, fileName)
+    
+    // 检查文件名是否是词典文件（以dict.yaml结尾）
+    const fileBaseName = path.basename(filePath);
+    const isDictFile = fileBaseName.endsWith('dict.yaml');
+    
     fs.readFile(filePath, {encoding: 'utf-8'}, (err, res) => {
         if (err) {
-            console.log(err)
-        } else {
-            if (responseWindow) {
-                responseWindow.send('showFileContent', fileName, filePath, res)
+            console.log('读取文件失败:', err)
+            
+            // 发送错误消息到配置窗口，如果配置窗口存在
+            if (configWindow && !configWindow.isDestroyed()) {
+                configWindow.send('ConfigWindow:DictFileError', filePath, err.message);
+            }
+            
+            // 如果读取失败，尝试在备用位置查找文件
+            if (!isExternalFile && path.isAbsolute(fileName)) {
+                // 如果失败且fileName是绝对路径，尝试直接读取
+                fs.readFile(fileName, {encoding: 'utf-8'}, (err2, res2) => {
+                    if (err2) {
+                        console.log('备用读取也失败:', err2)
+                        // 再次发送错误消息
+                        if (configWindow && !configWindow.isDestroyed()) {
+                            configWindow.send('ConfigWindow:DictFileError', fileName, err2.message);
+                        }                    } else {
+                        // 检查文件名是否是词典文件
+                        const backupFileBaseName = path.basename(fileName);
+                        if (backupFileBaseName.endsWith('dict.yaml')) {
+                            // 是词典文件，传递内容
+                            if (responseWindow) {
+                                responseWindow.send('showFileContent', path.basename(fileName), fileName, res2)
+                            } else {
+                                mainWindow.webContents.send('showFileContent', path.basename(fileName), fileName, res2)
+                            }
+                        } else {
+                            // 不是词典文件，发送错误消息
+                            console.log('文件不是有效的词典文件:', fileName);
+                            if (configWindow && !configWindow.isDestroyed()) {
+                                configWindow.send('ConfigWindow:DictFileError', fileName, '文件不是有效的词典文件（必须以dict.yaml结尾）');
+                            }
+                            
+                            // 虽然不是词典文件，但仍然显示内容以便用户查看
+                            if (responseWindow) {
+                                responseWindow.send('showFileContent', path.basename(fileName), fileName, res2)
+                            } else {
+                                mainWindow.webContents.send('showFileContent', path.basename(fileName), fileName, res2)
+                            }
+                        }
+                    }
+                })
+            }        } else {
+            // 验证文件是否是词典文件
+            if (isDictFile) {
+                // 是词典文件，传递内容
+                if (responseWindow) {
+                    responseWindow.send('showFileContent', fileName, filePath, res)
+                } else {
+                    mainWindow.webContents.send('showFileContent', fileName, filePath, res)
+                }
             } else {
-                mainWindow.webContents.send('showFileContent', fileName, filePath, res)
+                // 不是词典文件，发送错误消息
+                console.log('文件不是有效的词典文件:', filePath);
+                if (configWindow && !configWindow.isDestroyed()) {
+                    configWindow.send('ConfigWindow:DictFileError', filePath, '文件不是有效的词典文件（必须以dict.yaml结尾）');
+                }
+                
+                // 虽然不是词典文件，但仍然显示内容以便用户查看
+                if (responseWindow) {
+                    responseWindow.send('showFileContent', fileName, filePath, res)
+                } else {
+                    mainWindow.webContents.send('showFileContent', fileName, filePath, res)
+                }
             }
         }
     })
@@ -969,6 +1145,8 @@ function refreshWindows() {
 // 读取配置目录中的所有码表文件
 function getDictFileList() {
     let rimeFolderPath = getRimeConfigDir()
+    let config = readConfigFile()
+    
     fs.readdir(rimeFolderPath, (err, filePaths) => {
         if (err) {
             console.log(err)
@@ -982,6 +1160,23 @@ function getDictFileList() {
                     path: item
                 }
             })
+            
+            // 添加配置中存在但不在文件系统中的文件（可能是外部目录的文件）
+            if (config && config.fileNameList && config.fileNameList.length > 0) {
+                // 建立文件路径集合用于快速查找
+                const existingPaths = new Set(fileList.map(file => file.path))
+                
+                // 添加配置中存在但不在文件系统中的文件
+                config.fileNameList.forEach(configFile => {
+                    if (!existingPaths.has(configFile.path)) {
+                        fileList.push({
+                            name: configFile.name,
+                            path: configFile.path
+                        })
+                    }
+                })
+            }
+            
             // 排序路径
             fileList.sort((a, b) => a.name > b.name ? 1 : -1)
         }
