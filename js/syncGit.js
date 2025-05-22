@@ -61,6 +61,23 @@ async function getOctokit() {
     return new Octokit({ auth: token });
 }
 
+// 展示带确认按钮的错误弹窗
+function showErrorDialog(mainWindow, errorMsg) {
+    if (!mainWindow) return;
+    
+    // 使用自定义确认对话框
+    return new Promise((resolve) => {
+        mainWindow.webContents.send('showErrorDialog', errorMsg);
+        if (setConfirmCreateRemoteFolderCallback) {
+            setConfirmCreateRemoteFolderCallback((userOk) => {
+                resolve(userOk);
+            });
+        } else {
+            resolve(false);
+        }
+    });
+}
+
 async function checkGitHubConnection() {
     const octokit = await getOctokit();
     const { owner, repo, branch } = getGithubConfig();
@@ -78,13 +95,22 @@ async function checkGitHubConnection() {
             headers: { 'X-GitHub-Api-Version': '2022-11-28' }
         });
 
-        return { success: true, repoName: data.full_name, message: '成功连接到GitHub仓库: ' + data.full_name };
-    } catch (error) {
-        let errorMessage = '连接GitHub失败: ';
-        if (error.status === 404) errorMessage += '仓库不存在或无访问权限';
-        else if (error.status === 401) errorMessage += 'Token无效或已过期';
-        else if (error.status === 403) errorMessage += '访问权限不足';
-        else errorMessage += error.message;
+        return { success: true, repoName: data.full_name, message: '成功连接到GitHub仓库: ' + data.full_name };    } catch (error) {
+        let errorMessage = '';
+        
+        if (error.status === 404) {
+            errorMessage = '仓库不存在或无访问权限，请检查用户名、仓库名是否正确';
+        }
+        else if (error.status === 401) {
+            errorMessage = 'GitHub Token无效或已过期，请在配置中更新您的GitHub访问令牌';
+        }
+        else if (error.status === 403) {
+            errorMessage = 'GitHub API 权限不足，请确保令牌具有 repo 权限';
+        }
+        else {
+            errorMessage = '连接GitHub失败，请检查网络连接和GitHub配置';
+        }
+        
         // 安全：不要输出 token
         console.error('GitHub API error:', error.status, error.message);
         return { success: false, message: errorMessage };
@@ -187,66 +213,110 @@ async function requestWithRetry(octokit, endpoint, params, maxRetries = 3, delay
 
 async function checkDictsDiff(type) {
     console.log(`[检查词库差异] 开始 ${type} 差异检查...`);
-    const octokit = await getOctokit();
-    const { owner, repo, branch, folder } = getGithubConfig();
-    const config = readConfigFile();
-    if (!config.rimeHomeDir) {
-    console.log(`[检查词库差异] 错误: 未设置Rime目录`);
-        return { same: false, msg: '未设置Rime目录', diffFiles: [] };
-    }
-    let allSame = true;
-    const filesToSync = getFilesToSync();
-    console.log(`[检查词库差异] 要检查的文件: ${filesToSync.join(', ')}`);
-    let diffFiles = [];
-    for (const file of filesToSync) {
-        const filePath = path.join(config.rimeHomeDir, file);
-        let localContent = '';
-        if (fs.existsSync(filePath)) {
-            localContent = fs.readFileSync(filePath, 'utf8');
+    
+    try {
+        const octokit = await getOctokit();
+        const { owner, repo, branch, folder } = getGithubConfig();
+        const config = readConfigFile();
+        
+        if (!config.rimeHomeDir) {
+            console.log(`[检查词库差异] 错误: 未设置Rime目录`);
+            return { same: false, msg: '未设置Rime目录', diffFiles: [], error: true, errorMsg: '未设置Rime目录' };
         }
-        let remoteContent = '';
-        let remotePath = folder ? (folder + '/' + file) : file;        try {
-            // 使用带有重试机制的请求
-            const { data } = await requestWithRetry(octokit, 'GET /repos/{owner}/{repo}/contents/{path}', {
-                owner,
-                repo,
-                path: remotePath,
-                ref: branch,
-                headers: { 'X-GitHub-Api-Version': '2022-11-28' }
-            });
-              // 检查是否是大文件（GitHub API 可能返回 blob 引用而不是直接内容）
-            if (!data.content && data.git_url) {
-                // 使用 blob API 获取大文件内容，使用带重试机制的请求
-                const blobResponse = await requestWithRetry(octokit, 'GET {url}', {
-                    url: data.git_url,
+        
+        let allSame = true;
+        const filesToSync = getFilesToSync();
+        console.log(`[检查词库差异] 要检查的文件: ${filesToSync.join(', ')}`);
+        let diffFiles = [];
+        
+        for (const file of filesToSync) {
+            const filePath = path.join(config.rimeHomeDir, file);
+            let localContent = '';
+            if (fs.existsSync(filePath)) {
+                localContent = fs.readFileSync(filePath, 'utf8');
+            }
+            let remoteContent = '';
+            let remotePath = folder ? (folder + '/' + file) : file;
+            
+            try {
+                // 使用带有重试机制的请求
+                const { data } = await requestWithRetry(octokit, 'GET /repos/{owner}/{repo}/contents/{path}', {
+                    owner,
+                    repo,
+                    path: remotePath,
+                    ref: branch,
                     headers: { 'X-GitHub-Api-Version': '2022-11-28' }
                 });
                 
-                if (blobResponse.data && blobResponse.data.content) {
-                    remoteContent = Buffer.from(blobResponse.data.content, 'base64').toString('utf8');
+                // 检查是否是大文件（GitHub API 可能返回 blob 引用而不是直接内容）
+                if (!data.content && data.git_url) {
+                    // 使用 blob API 获取大文件内容，使用带重试机制的请求
+                    const blobResponse = await requestWithRetry(octokit, 'GET {url}', {
+                        url: data.git_url,
+                        headers: { 'X-GitHub-Api-Version': '2022-11-28' }
+                    });
+                    
+                    if (blobResponse.data && blobResponse.data.content) {
+                        remoteContent = Buffer.from(blobResponse.data.content, 'base64').toString('utf8');
+                    }
+                } else if (data.content) {
+                    // 正常处理常规文件内容
+                    remoteContent = Buffer.from(data.content, 'base64').toString('utf8');
                 }
-            } else if (data.content) {
-                // 正常处理常规文件内容
-                remoteContent = Buffer.from(data.content, 'base64').toString('utf8');
+            } catch (e) {
+                if (e.status === 404) {
+                    // 文件不存在，将差异添加到列表
+                    allSame = false;
+                    diffFiles.push(file);
+                    continue;
+                } else {
+                    // 其他错误重新抛出
+                    throw e;
+                }
             }
-        } catch (e) {
-            if (e.status !== 404) throw e;        }        
-        // 规范化换行符，防止因换行符不同导致比较失败
-        const normalizedLocalContent = localContent.replace(/\r\n/g, '\n');
-        const normalizedRemoteContent = remoteContent.replace(/\r\n/g, '\n');        // 添加调试日志，记录文件比较结果
-        console.log(`比较文件 ${file}:`,
-            `本地长度: ${normalizedLocalContent.length}`,
-            `远程长度: ${normalizedRemoteContent.length}`,
-            `相同: ${normalizedLocalContent === normalizedRemoteContent ? '是' : '否'}`);
-        
-        if (normalizedLocalContent !== normalizedRemoteContent) {
-            allSame = false;
-            diffFiles.push(file);
-            console.log(`文件 ${file} 在本地和远程之间存在差异`);
+            
+            // 规范化换行符，防止因换行符不同导致比较失败
+            const normalizedLocalContent = localContent.replace(/\r\n/g, '\n');
+            const normalizedRemoteContent = remoteContent.replace(/\r\n/g, '\n');
+            
+            // 添加调试日志，记录文件比较结果
+            console.log(`比较文件 ${file}:`,
+                `本地长度: ${normalizedLocalContent.length}`,
+                `远程长度: ${normalizedRemoteContent.length}`,
+                `相同: ${normalizedLocalContent === normalizedRemoteContent ? '是' : '否'}`);
+            
+            if (normalizedLocalContent !== normalizedRemoteContent) {
+                allSame = false;
+                diffFiles.push(file);
+                console.log(`文件 ${file} 在本地和远程之间存在差异`);
+            }
         }
+        
+        console.log(`[检查词库差异] 差异检查完成。全部相同: ${allSame ? '是' : '否'}, 不同文件: ${diffFiles.length > 0 ? diffFiles.join(', ') : '无'}`);
+        return { same: allSame, diffFiles };    } catch (error) {
+        console.error(`[检查词库差异] 错误:`, error);
+        
+        let errorMsg = '检查词库差异失败';
+        
+        if (error.status === 401) {
+            errorMsg = 'GitHub Token 无效或已过期，请在配置中更新您的GitHub访问令牌';
+        } else if (error.status === 403) {
+            errorMsg = 'GitHub API 权限不足，请确保令牌具有 repo 权限';
+        } else if (error.status === 404) {
+            errorMsg = '找不到仓库或资源，请检查用户名、仓库名是否正确';
+        } else if (error.cause && (error.cause.code === 'ECONNRESET' || error.cause.code === 'ETIMEDOUT')) {
+            errorMsg = '网络连接问题，请检查您的网络连接后重试';
+        } else {
+            errorMsg = `错误: ${error.message}`;
+        }
+        
+        return { 
+            same: false, 
+            diffFiles: [], 
+            error: true, 
+            errorMsg: errorMsg
+        };
     }
-    console.log(`[检查词库差异] 差异检查完成。全部相同: ${allSame ? '是' : '否'}, 不同文件: ${diffFiles.length > 0 ? diffFiles.join(', ') : '无'}`);
-    return { same: allSame, diffFiles };
 }
 
 // 只上传有差异的文件
@@ -256,11 +326,14 @@ async function uploadDictToGit(mainWindow) {
     try {
         const connectionStatus = await checkGitHubConnection();
         if (!connectionStatus.success) {
-            throw new Error(connectionStatus.message);
+            // 使用自定义对话框而不是简单消息
+            await showErrorDialog(mainWindow, connectionStatus.message);
+            return;
         }
         const config = readConfigFile();
         if (!config.rimeHomeDir) {
-            throw new Error('请先在设置中选择Rime配置目录');
+            await showErrorDialog(mainWindow, '请先在设置中选择Rime配置目录');
+            return;
         }
         // 检查/创建远程文件夹
         const folderCheck = await checkOrCreateRemoteFolder(octokit, {owner, repo, branch, folder}, mainWindow);
@@ -326,11 +399,22 @@ async function uploadDictToGit(mainWindow) {
                 // 如果没有成功上传的文件，只显示简单提示，不显示详细结果
                 mainWindow.webContents.send('gitOperationResult', `上传操作未能完成，请检查网络或权限`);
             }
-        } else {
-            mainWindow.webContents.send('gitOperationResult', '没有需要上传的词典');
+        } else {            mainWindow.webContents.send('gitOperationResult', '没有需要上传的词典');
+        }    } catch (error) {
+        // 使用更友好的错误对话框，只显示简洁的错误消息
+        let errorMsg = '上传失败';
+        
+        if (error.status === 401) {
+            errorMsg = 'GitHub Token 无效或已过期，请在配置中更新您的GitHub访问令牌';
+        } else if (error.status === 403) {
+            errorMsg = 'GitHub API 权限不足，请确保令牌具有 repo 权限';
+        } else if (error.status === 404) {
+            errorMsg = '找不到仓库或资源，请检查用户名、仓库名是否正确';
+        } else if (error.cause && (error.cause.code === 'ECONNRESET' || error.cause.code === 'ETIMEDOUT')) {
+            errorMsg = '网络连接问题，请检查您的网络连接后重试';
         }
-    } catch (error) {
-        mainWindow.webContents.send('gitOperationResult', '上传失败: ' + error.message);
+        
+        await showErrorDialog(mainWindow, errorMsg);
         console.error('上传错误:', error);
     }
 }
@@ -339,13 +423,16 @@ async function uploadDictToGit(mainWindow) {
 async function downloadDictFromGit(mainWindow) {
     const octokit = await getOctokit();
     const { owner, repo, branch, folder } = getGithubConfig();
-    try {
-        const connectionStatus = await checkGitHubConnection();
+    try {        const connectionStatus = await checkGitHubConnection();
         if (!connectionStatus.success) {
-            throw new Error(connectionStatus.message);
+            // 使用自定义对话框而不是简单消息
+            await showErrorDialog(mainWindow, connectionStatus.message);
+            return;
         }
-        const config = readConfigFile();        if (!config.rimeHomeDir) {
-            throw new Error('请先在设置中选择Rime配置目录');
+        const config = readConfigFile();
+        if (!config.rimeHomeDir) {
+            await showErrorDialog(mainWindow, '请先在设置中选择Rime配置目录');
+            return;
         }
         // 检查/创建远程文件夹（下载时不存在直接提示）
         if (folder) {
@@ -357,13 +444,13 @@ async function downloadDictFromGit(mainWindow) {
                     ref: branch,
                     headers: { 'X-GitHub-Api-Version': '2022-11-28' }
                 });
-            } catch (e) {
-                if (e.status === 404) {
-                    throw new Error(`远程仓库中不存在'${folder}'文件夹`);
+            } catch (e) {                if (e.status === 404) {
+                    await showErrorDialog(mainWindow, `远程仓库中不存在'${folder}'文件夹`);
+                    return;
                 }
                 throw e;
             }
-        }        // 先比对差异
+        }// 先比对差异
         const diffResult = await checkDictsDiff('download');
         if (diffResult.same) {
             mainWindow.webContents.send('gitOperationResult', '本地词库与远程仓库一致，无需下载');
@@ -429,10 +516,22 @@ async function downloadDictFromGit(mainWindow) {
                 // 如果没有成功下载的文件，只显示简单提示，不显示详细结果
                 mainWindow.webContents.send('gitOperationResult', `下载操作未能完成，请检查网络或远程仓库`);
             }
-        } else {
-            mainWindow.webContents.send('gitOperationResult', '没有需要下载的词典');
+        } else {            mainWindow.webContents.send('gitOperationResult', '没有需要下载的词典');
         }    } catch (error) {
-        mainWindow.webContents.send('gitOperationResult', '下载失败: ' + error.message);
+        // 使用更友好的错误对话框，只显示简洁的错误消息
+        let errorMsg = '下载失败';
+        
+        if (error.status === 401) {
+            errorMsg = 'GitHub Token 无效或已过期，请在配置中更新您的GitHub访问令牌';
+        } else if (error.status === 403) {
+            errorMsg = 'GitHub API 权限不足，请确保令牌具有 repo 权限';
+        } else if (error.status === 404) {
+            errorMsg = '找不到仓库或资源，请检查用户名、仓库名是否正确';
+        } else if (error.cause && (error.cause.code === 'ECONNRESET' || error.cause.code === 'ETIMEDOUT')) {
+            errorMsg = '网络连接问题，请检查您的网络连接后重试';
+        }
+        
+        await showErrorDialog(mainWindow, errorMsg);
         console.error('下载错误:', error);
     }
 }
@@ -443,5 +542,6 @@ module.exports = {
     downloadDictFromGit,
     checkDictsDiff,
     checkGitHubConnection,
+    showErrorDialog,
     setConfirmCreateRemoteFolderCallback: setConfirmCreateRemoteFolderCallbackExport
 };

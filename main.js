@@ -339,13 +339,20 @@ function createMainWindow() {
     ipcMain.on('downloadFromGit', () => {
         const { downloadDictFromGit } = require('./js/syncGit');
         downloadDictFromGit(mainWindow);
-    });
-
-    // 检查本地和远程词库内容是否一致
-    ipcMain.removeHandler('checkDictsDiff');
-    ipcMain.handle('checkDictsDiff', async (event, type) => {
-        const { checkDictsDiff } = require('./js/syncGit');
-        return await checkDictsDiff(type);
+    });    // 检查本地和远程词库内容是否一致
+    ipcMain.removeHandler('checkDictsDiff');    ipcMain.handle('checkDictsDiff', async (event, type) => {
+        const { checkDictsDiff, showErrorDialog } = require('./js/syncGit');
+        const result = await checkDictsDiff(type);
+        
+        // 如果发生错误，显示错误对话框
+        if (result.error) {
+            // 在下一个事件循环中显示错误对话框，以避免渲染进程还未准备好
+            setTimeout(() => {
+                showErrorDialog(mainWindow, result.errorMsg);
+            }, 100);
+        }
+        
+        return result;
     });
 }
 

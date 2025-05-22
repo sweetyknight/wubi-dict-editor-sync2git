@@ -99,6 +99,54 @@
         @media (max-width: 600px) {
           .app-container { padding-bottom: 80px; }
         }
+        
+        /* 自定义对话框样式 */
+        .custom-dialog-mask {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .custom-dialog {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+            width: 400px;
+            max-width: 90%;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .custom-dialog-content {
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #333;
+            white-space: pre-line;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+        
+        .custom-dialog-footer {
+            display: flex;
+            justify-content: center;
+        }
+        
+        /* 暗色主题适配 */
+        html.theme-dark .custom-dialog {
+            background-color: #1c1f24;
+            color: #e0e0e0;
+        }
+        
+        html.theme-dark .custom-dialog-content {
+            color: #e0e0e0;
+        }
     </style>
 </head>
 <body class="index" :class="{'theme-dark': config && config.theme === 'black', 'theme-auto': config && config.theme === 'auto'}">
@@ -169,7 +217,7 @@
                  @click.capture="toggleFileListDropDown()">移动到...            </div>
             <div class="dropdown-body" v-show="isShowDropdown">
                 <div class="file-list shadow" v-if="dropdownFileList.length > 0">
-                    <div :class="['file-list-item', {active: fileIndex === dropdownActiveFileIndex}]"
+                    <div :class="['file-list-item', {active: dict.fileName === file.path}]"
                          @click="setDropdownActiveIndex(fileIndex)"
                          v-for="(file, fileIndex) in dropdownFileList"
                          :key="fileIndex">

@@ -202,6 +202,26 @@ const app = {
             // 移除自动关闭弹窗的定时器，改为由用户点击关闭
         })
 
+        // 监听错误对话框请求
+        ipcRenderer.on('showErrorDialog', (event, errorMsg) => {
+            this.dialogMsg = errorMsg
+            this.showDialog = true
+            // 提供确认按钮
+            this.$nextTick(() => {
+                // 动态插入按钮
+                let dialog = document.querySelector('.custom-dialog-footer') || document.body
+                dialog.innerHTML = '' // 清空原有内容
+                let btns = document.createElement('div')
+                btns.style = 'display:flex;justify-content:center;'
+                btns.innerHTML = `<button id="btn-confirm-error" class="btn btn-primary">确定</button>`
+                dialog.appendChild(btns)
+                document.getElementById('btn-confirm-error').onclick = () => {
+                    ipcRenderer.send('confirmCreateRemoteFolderResult', true) // 复用现有通道
+                    this.showDialog = false
+                }
+            })
+        })
+
         // 监听远程文件夹创建确认请求
         ipcRenderer.on('confirmCreateRemoteFolder', (event, folder) => {
             this.dialogMsg = `远程文件夹 "${folder}" 不存在，是否创建？`
@@ -221,6 +241,26 @@ const app = {
                 };
                 document.getElementById('btn-cancel-create-folder').onclick = () => {
                     ipcRenderer.send('confirmCreateRemoteFolderResult', false);
+                    this.showDialog = false;
+                };
+            });
+        })
+        
+        // 监听错误对话框请求
+        ipcRenderer.on('showErrorDialog', (event, errorMsg) => {
+            this.dialogMsg = errorMsg;
+            this.showDialog = true;
+            // 提供确认按钮
+            this.$nextTick(() => {
+                // 动态插入按钮
+                let dialog = document.querySelector('.custom-dialog-footer') || document.body;
+                dialog.innerHTML = ''; // 清空原有内容
+                let btns = document.createElement('div');
+                btns.style = 'display:flex;justify-content:center;';
+                btns.innerHTML = `<button id="btn-confirm-error" class="btn btn-primary">确定</button>`;
+                dialog.appendChild(btns);
+                document.getElementById('btn-confirm-error').onclick = () => {
+                    ipcRenderer.send('confirmCreateRemoteFolderResult', true); // 复用现有通道
                     this.showDialog = false;
                 };
             });
