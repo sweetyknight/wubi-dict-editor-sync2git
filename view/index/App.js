@@ -266,6 +266,12 @@ const app = {
             });
         })
 
+        // 监听 config.html 词典文件变更事件
+        ipcRenderer.on('ConfigWindow:DictFilesChanged', () => {
+            ipcRenderer.send('MainWindow:RequestConfigFile'); // 重新请求配置
+            ipcRenderer.send('GetFileList'); // 重新请求文件列表
+        });
+
         this.addKeyboardListener()
         onresize = ()=>{
             this.heightContent = innerHeight - 47 - 20 - 10 + 3

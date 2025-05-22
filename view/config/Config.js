@@ -174,20 +174,42 @@ const app = {
         removeFile(index) {
             if (this.config.fileNameList) {
                 this.config.fileNameList.splice(index, 1);
-                // 手动触发保存配置
                 ipcRenderer.send('ConfigWindow:RequestSaveConfig', JSON.stringify(this.config, null, 2));
+                ipcRenderer.send('ConfigWindow:DictFilesChanged'); // 通知主窗口
             }
         },
         // 选择词典文件
         chooseDictFiles() {
-            // 让主进程弹出文件选择器，初始目录为rimeHomeDir
+            if (this._choosingDictFile) return; // 防止重复弹窗
+            this._choosingDictFile = true;
             ipcRenderer.send('ConfigWindow:ChooseDictFiles', this.config.rimeHomeDir);
-        },
-        setInitFile(file){
-            this.config.initFileName = file.path
+            const handler = (event, dictFiles) => {
+                this._choosingDictFile = false;
+                ipcRenderer.removeListener('ConfigWindow:ChosenDictFiles', handler);
+                if (dictFiles && dictFiles.length > 0) {
+                    // 只允许 .dict.yaml 文件
+                    const validFiles = dictFiles.filter(file => file.path.endsWith('.dict.yaml'));
+                    if (validFiles.length === 0) {
+                        this.dialogMsg = '请选择 .dict.yaml 词典文件';
+                        this.showDialog = true;
+                        return;
+                    }
+                    if (!this.config.fileNameList) this.config.fileNameList = [];
+                    validFiles.forEach(file => {
+                        if (!this.config.fileNameList.some(f => f.path === file.path)) {
+                            this.config.fileNameList.push(file);
+                        }
+                    });
+                    ipcRenderer.send('ConfigWindow:RequestSaveConfig', JSON.stringify(this.config, null, 2));
+                    ipcRenderer.send('ConfigWindow:DictFilesChanged'); // 通知主窗口
+                }
+            };
+            ipcRenderer.on('ConfigWindow:ChosenDictFiles', handler);
         },
         setMainDictFile(file){
-            this.config.mainDictFileName = file.path
+            this.config.mainDictFileName = file.path;
+            ipcRenderer.send('ConfigWindow:RequestSaveConfig', JSON.stringify(this.config, null, 2));
+            ipcRenderer.send('ConfigWindow:DictFilesChanged'); // 通知主窗口
         },
         setDictMap(){
             ipcRenderer.send('ConfigWindow:SetDictMapFile')
