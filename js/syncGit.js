@@ -355,6 +355,12 @@ function setConfirmCreateRemoteFolderCallbackExport(cb) {
     setConfirmCreateRemoteFolderCallback = cb;
 }
 
+// 依赖主进程暴露的applyRimeCallback
+let applyRimeCallback = null;
+function setApplyRimeCallbackExport(cb) {
+    applyRimeCallback = cb;
+}
+
 async function checkOrCreateRemoteFolder(octokit, {owner, repo, branch, folder}, mainWindow) {
     if (!folder) return {ok: true, folder: ''};
     try {
@@ -795,8 +801,24 @@ async function downloadDictFromGit(mainWindow) {
                     updateLastSyncTime();
                 }
                 
+                // 检查是否需要自动部署
+                const config = readConfigFile();
+                if (config.autoDeployOnDownload) {
+                    console.log('[下载完成] 开始自动部署输入法...');
+                    try {
+                        // 调用部署回调函数
+                        if (typeof applyRimeCallback === 'function') {
+                            applyRimeCallback();
+                        }
+                    } catch (deployError) {
+                        console.error('[自动部署] 部署失败:', deployError.message);
+                    }
+                }
+                
                 // 只显示成功下载的文件名列表，不再显示详细结果
-                mainWindow.webContents.send('gitOperationResult', `已成功下载词典：\n${successfulFiles.join('\n')}`);
+                const downloadMsg = `已成功下载词典：\n${successfulFiles.join('\n')}`;
+                const deployMsg = config.autoDeployOnDownload ? '\n\n已自动部署输入法' : '';
+                mainWindow.webContents.send('gitOperationResult', downloadMsg + deployMsg);
             } else {
                 // 如果没有成功下载的文件，只显示简单提示，不显示详细结果
                 mainWindow.webContents.send('gitOperationResult', `下载操作未能完成，请检查网络或远程仓库`);
@@ -831,5 +853,6 @@ module.exports = {
     showErrorDialog,
     checkSyncStatus,
     getRemoteLastCommitTime,
-    setConfirmCreateRemoteFolderCallback: setConfirmCreateRemoteFolderCallbackExport
+    setConfirmCreateRemoteFolderCallback: setConfirmCreateRemoteFolderCallbackExport,
+    setApplyRimeCallback: setApplyRimeCallbackExport
 };

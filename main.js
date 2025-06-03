@@ -1323,3 +1323,8 @@ syncGit.setConfirmCreateRemoteFolderCallback(cb => {
     confirmCreateRemoteFolderCallback = cb;
 });
 
+// 设置部署回调函数
+syncGit.setApplyRimeCallback(() => {
+    applyRime();
+});
+

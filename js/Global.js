@@ -1,5 +1,5 @@
-const IS_IN_DEVELOP = false // 生产模式，上传到公共仓库应设为false
-// const IS_IN_DEVELOP = true // 开发模式
+// const IS_IN_DEVELOP = false // 生产模式，上传到公共仓库应设为false
+const IS_IN_DEVELOP = true // 开发模式
 
 const CONFIG_FILE_NAME = 'config.json' // 配置文件 文件名
 const CONFIG_DICT_MAP_FILE_NAME = 'dict_map.txt' // 编码生成用的字典码表文件
@@ -10,6 +10,7 @@ const DEFAULT_CONFIG = {
     autoDeployOnAdd: true,                        // 添词后 是否自动部署
     autoDeployOnDelete: true,                     // 删词后 是否自动部署
     autoDeployOnEdit: true,                       // 编辑词条后 是否自动部署
+    autoDeployOnDownload: true,                   // 下载后 是否自动部署
     enterKeyBehavior: 'add',                       // add | search
     rimeHomeDir: '',                               // 配置文件主目录
     rimeExecDir: '',                               // 输入法程序主目录

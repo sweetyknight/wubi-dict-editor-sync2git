@@ -1,19 +1,19 @@
 const Vue  = require('../../node_modules/vue/dist/vue.common.prod')
 const {ipcRenderer} = require('electron')
-const {encrypt} = require('../../js/Utility')
+const {encrypt, decrypt} = require('../../js/Utility')
 const { DEFAULT_CONFIG } =  require('../../js/Global')
 const DictMap = require('../../js/DictMap')
 
 
 // Vue 2
 const app = {
-    el: '#app',
-    data() {
+    el: '#app',    data() {
         return {
             config: DEFAULT_CONFIG,
             dictMapContent: '', // 字典文件内容
             showDialog: false,  // 控制弹窗显示
             dialogMsg: '',      // 弹窗内容
+            showGithubToken: false, // 控制GitHub Token显示状态
         }
     },
     mounted() {
@@ -52,9 +52,7 @@ const app = {
                 this.$set(this.config, 'fileNameList', fileList)
                 // [{ "name": "luna_pinyin.sogou", "path": "luna_pinyin.sogou.dict.yaml" }]
             }
-        })
-
-        // RESPONSE OF CONFIG
+        })        // RESPONSE OF CONFIG
         ipcRenderer.on('ConfigWindow:ResponseConfigFile', (event, config) => {
             console.log('获取配置成功')
             this.config = config
@@ -64,6 +62,9 @@ const app = {
 
             // v1.15 添加 rimeExecDir 字段
             if (!config.hasOwnProperty('rimeExecDir')) this.$set(this.config, 'rimeExecDir', '')
+
+            // 添加 autoDeployOnDownload 字段
+            if (!config.hasOwnProperty('autoDeployOnDownload')) this.$set(this.config, 'autoDeployOnDownload', true)
 
             // after config is loaded, then request for fileList
             ipcRenderer.send('requestFileList')
@@ -112,18 +113,34 @@ const app = {
                 // 手动触发保存配置
                 ipcRenderer.send('ConfigWindow:RequestSaveConfig', JSON.stringify(this.config, null, 2));
             }
-        })
-
-        // 读取字典文件的内容
+        })        // 读取字典文件的内容
         ipcRenderer.on('ConfigWindow:ShowDictMapContent', (event, fileName, filePath, fileContent) => {
-            let dictMap = new DictMap(fileContent)
+            let dictMap = new DictMap(fileContent);
             let dictMapFileContent = dictMap.toExportString()
             ipcRenderer.send('ConfigWindow:SaveDictMapFile', dictMapFileContent) // 保存取到的单字字典文本
-        })
-
-
+        });
+        
         onresize = ()=>{
             this.heightContent = innerHeight - 47 - 20 - 10 + 3
+        }
+    },
+    computed: {
+        displayGithubToken() {
+            if (!this.showGithubToken || !this.config.githubToken) {
+                return '';
+            }
+            
+            let token = this.config.githubToken;
+            // 如果是加密的token，解密显示
+            if (token.startsWith('ENC:')) {
+                try {
+                    return decrypt(token.slice(4));
+                } catch (e) {
+                    console.error('Token解密失败:', e);
+                    return '解密失败';
+                }
+            }
+            return token;
         }
     },
     methods: {
@@ -222,9 +239,10 @@ const app = {
         },
         clearRimeHomeDir(){
             this.config.rimeHomeDir = ''
-        },
-        clearRimeExecDir(){
+        },        clearRimeExecDir(){
             this.config.rimeExecDir = ''
+        },        toggleGithubTokenVisibility() {
+            this.showGithubToken = !this.showGithubToken;
         },
     },
     watch: {
