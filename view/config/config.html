@@ -51,9 +51,8 @@
 </head>
 <body class="config" :class="{'theme-dark': config && config.theme === 'black', 'theme-auto': config && config.theme === 'auto'}">
 
-<div v-cloak id="app" class="container">
-    <!-- 自定义弹窗提示 -->
-    <div v-if="showDialog" class="custom-dialog-mask" @click="showDialog = false">
+<div v-cloak id="app" class="container">    <!-- 自定义弹窗提示 -->
+    <div v-if="showDialog" class="custom-dialog-mask">
         <div class="custom-dialog" @click.stop>
             <div class="custom-dialog-content">{{ dialogMsg }}</div>
             <div class="custom-dialog-footer">

@@ -6,6 +6,7 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 const { readConfigFile, encrypt, decrypt } = require('./Utility');
+const { CONFIG_FILE_PATH, CONFIG_FILE_NAME } = require('./Global');
 
 // 在 Windows 平台上设置控制台编码为 UTF-8
 if (os.platform() === 'win32') {
@@ -76,6 +77,237 @@ function showErrorDialog(mainWindow, errorMsg) {
             resolve(false);
         }
     });
+}
+
+// 更新配置文件中的最后同步时间
+function updateLastSyncTime(syncTime = null) {
+    try {
+        const config = readConfigFile();
+        config.lastSyncTime = syncTime || new Date().toISOString();
+        
+        const configPath = path.join(os.homedir(), CONFIG_FILE_PATH);
+        if (!fs.existsSync(configPath)) {
+            fs.mkdirSync(configPath, { recursive: true });
+        }
+        
+        fs.writeFileSync(
+            path.join(configPath, CONFIG_FILE_NAME),
+            JSON.stringify(config, null, 2),
+            { encoding: 'utf-8' }
+        );
+        
+        console.log(`[更新配置] 记录同步时间: ${config.lastSyncTime}`);
+        return true;
+    } catch (error) {
+        console.error('[更新配置] 记录同步时间失败:', error.message);
+        return false;
+    }
+}
+
+// 获取远程最新提交时间
+async function getRemoteLastCommitTime() {
+    try {
+        const octokit = await getOctokit();
+        const { owner, repo, branch } = getGithubConfig();
+        
+        const { data: commits } = await requestWithRetry(octokit, 'GET /repos/{owner}/{repo}/commits', {
+            owner,
+            repo,
+            sha: branch,
+            per_page: 1,
+            headers: { 'X-GitHub-Api-Version': '2022-11-28' }
+        });
+        
+        if (commits.length > 0) {
+            return new Date(commits[0].commit.committer.date);
+        }
+        return null;
+    } catch (error) {
+        console.warn(`[获取远程提交时间] 失败:`, error.message);
+        return null;
+    }
+}
+
+// 获取北京时间（强制使用CST时区，避免本地时间错乱）
+function getBeijingTime(date = null) {
+    const targetDate = date || new Date();
+    // 获取UTC时间并转换为北京时间（UTC+8）
+    const beijingTime = new Date(targetDate.getTime() + (8 * 60 * 60 * 1000));
+    return beijingTime;
+}
+
+// 检查本地同步状态，返回是否需要下载
+async function checkSyncStatus(mainWindow = null) {
+    try {
+        const config = readConfigFile();
+        
+        // 解析本地同步时间，如果无效则使用初始时间
+        let localLastSyncTime;
+        try {
+            localLastSyncTime = config.lastSyncTime ? new Date(config.lastSyncTime) : new Date("1970-01-01T00:00:00.000Z");
+            // 验证时间是否有效
+            if (isNaN(localLastSyncTime.getTime())) {
+                console.warn(`[检查同步状态] 本地同步时间格式无效: ${config.lastSyncTime}`);
+                localLastSyncTime = new Date("1970-01-01T00:00:00.000Z");
+            }
+        } catch (timeError) {
+            console.warn(`[检查同步状态] 解析本地同步时间失败: ${timeError.message}`);
+            localLastSyncTime = new Date("1970-01-01T00:00:00.000Z");
+        }
+        
+        // 获取远程最新提交时间
+        const remoteLastCommitTime = await getRemoteLastCommitTime();
+        
+        if (!remoteLastCommitTime) {
+            const errorMsg = '无法连接到远程仓库或获取提交信息。\n\n可能的原因：\n1. 网络连接问题\n2. GitHub Token无效或过期\n3. 仓库不存在或无权限访问\n\n请检查网络连接和GitHub配置后重试。';
+            console.error(`[检查同步状态] 无法获取远程提交时间`);
+            
+            // 如果有mainWindow，显示错误弹窗
+            if (mainWindow && !mainWindow.isDestroyed()) {
+                await showErrorDialog(mainWindow, errorMsg);
+            }
+            
+            return { 
+                needDownload: false, 
+                message: null, 
+                error: true, 
+                errorMsg 
+            };
+        }
+        
+        // 使用北京时间进行比较，避免时区问题
+        const beijingLocalTime = getBeijingTime(localLastSyncTime);
+        const beijingRemoteTime = getBeijingTime(remoteLastCommitTime);
+        
+        console.log(`[检查同步状态] 本地同步时间(北京时间): ${beijingLocalTime.toISOString()}`);
+        console.log(`[检查同步状态] 远程提交时间(北京时间): ${beijingRemoteTime.toISOString()}`);
+        
+        // 处理本地时间比远程时间新的异常情况
+        if (beijingLocalTime > beijingRemoteTime) {
+            const timeDiffMinutes = Math.round((beijingLocalTime - beijingRemoteTime) / (1000 * 60));
+            console.warn(`[检查同步状态] 检测到本地时间比远程时间快 ${timeDiffMinutes} 分钟`);
+            
+            // 如果时间差异超过24小时，可能是本地时间错乱
+            if (timeDiffMinutes > 24 * 60) {
+                console.warn(`[检查同步状态] 本地时间可能错乱，时间差异过大: ${timeDiffMinutes} 分钟`);
+                
+                // 检查实际内容是否有差异
+                try {
+                    const diffResult = await checkDictsDiff('download');
+                    if (diffResult.same) {
+                        // 内容一致，强制同步远程时间
+                        updateLastSyncTime(beijingRemoteTime.toISOString());
+                        console.log(`[检查同步状态] 内容一致，已强制同步远程时间（修正本地时间错乱）`);
+                        return { needDownload: false, message: null };
+                    } else {
+                        // 内容不一致但本地时间异常，需要用户选择
+                        const message = `检测到时间异常：本地同步时间比远程提交时间快 ${timeDiffMinutes} 分钟。\n\n这可能是由于系统时间错乱导致的。建议执行"下载到本地"操作以确保数据同步。`;
+                        return { 
+                            needDownload: true, 
+                            message,
+                            remoteCommitTime: beijingRemoteTime.toISOString(),
+                            timeAnomaly: true
+                        };
+                    }
+                } catch (diffError) {
+                    const errorMsg = `检查内容差异时发生错误：${diffError.message}\n\n可能的原因：\n1. 网络连接不稳定\n2. 远程仓库访问权限问题\n3. 本地文件访问权限问题\n\n请检查网络和权限设置后重试。`;
+                    console.error(`[检查同步状态] 比较内容差异失败:`, diffError.message);
+                    
+                    if (mainWindow && !mainWindow.isDestroyed()) {
+                        await showErrorDialog(mainWindow, errorMsg);
+                    }
+                    
+                    return { 
+                        needDownload: false, 
+                        message: null, 
+                        error: true, 
+                        errorMsg 
+                    };
+                }
+            } else {
+                // 时间差异较小，可能是正常的操作延迟，检查内容差异
+                try {
+                    const diffResult = await checkDictsDiff('download');
+                    if (diffResult.same) {
+                        // 内容一致，保持本地时间不变
+                        console.log(`[检查同步状态] 内容一致，本地时间较新但差异不大，保持现状`);
+                        return { needDownload: false, message: null };
+                    }
+                } catch (diffError) {
+                    const errorMsg = `检查内容差异时发生错误：${diffError.message}\n\n可能的原因：\n1. 网络连接不稳定\n2. 远程仓库访问权限问题\n3. 本地文件访问权限问题\n\n请检查网络和权限设置后重试。`;
+                    console.error(`[检查同步状态] 比较内容差异失败:`, diffError.message);
+                    
+                    if (mainWindow && !mainWindow.isDestroyed()) {
+                        await showErrorDialog(mainWindow, errorMsg);
+                    }
+                    
+                    return { 
+                        needDownload: false, 
+                        message: null, 
+                        error: true, 
+                        errorMsg 
+                    };
+                }
+            }
+        }
+        
+        // 本地时间早于远程时间，正常情况
+        if (beijingLocalTime < beijingRemoteTime) {
+            // 检查实际内容是否有差异
+            try {
+                const diffResult = await checkDictsDiff('download');
+                if (diffResult.same) {
+                    // 内容一致但时间不同步，自动同步时间
+                    updateLastSyncTime(beijingRemoteTime.toISOString());
+                    console.log(`[检查同步状态] 内容一致，已自动同步远程时间`);
+                    return { needDownload: false, message: null };
+                } else {
+                    // 内容不一致，需要下载
+                    const message = `检测到远程仓库有更新（${beijingRemoteTime.toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' })}）。\n\n为避免数据丢失，建议先执行"下载到本地"操作同步最新词典。`;
+                    return { 
+                        needDownload: true, 
+                        message,
+                        remoteCommitTime: beijingRemoteTime.toISOString()
+                    };
+                }
+            } catch (diffError) {
+                const errorMsg = `检查内容差异时发生错误：${diffError.message}\n\n可能的原因：\n1. 网络连接不稳定\n2. 远程仓库访问权限问题\n3. 本地文件访问权限问题\n\n为安全起见，建议执行"下载到本地"操作。`;
+                console.error(`[检查同步状态] 比较内容差异失败:`, diffError.message);
+                
+                if (mainWindow && !mainWindow.isDestroyed()) {
+                    await showErrorDialog(mainWindow, errorMsg);
+                }
+                
+                // 出现错误时，保守起见仍提示需要下载
+                const message = `远程仓库有更新，但检查差异时出现问题。\n\n为确保数据同步，建议执行"下载到本地"操作。`;
+                return { 
+                    needDownload: true, 
+                    message,
+                    remoteCommitTime: beijingRemoteTime.toISOString(),
+                    hasError: true
+                };
+            }
+        }
+        
+        // 时间相等，无需下载
+        console.log(`[检查同步状态] 本地与远程时间一致，无需下载`);
+        return { needDownload: false, message: null };
+        
+    } catch (error) {
+        const errorMsg = `检查同步状态时发生错误：${error.message}\n\n可能的原因：\n1. 网络连接问题\n2. 配置文件损坏\n3. GitHub服务异常\n\n请检查网络连接和配置后重试。`;
+        console.error(`[检查同步状态] 致命错误:`, error.message);
+        
+        if (mainWindow && !mainWindow.isDestroyed()) {
+            await showErrorDialog(mainWindow, errorMsg);
+        }
+        
+        return { 
+            needDownload: false, 
+            message: null, 
+            error: true, 
+            errorMsg 
+        };
+    }
 }
 
 async function checkGitHubConnection() {
@@ -224,6 +456,20 @@ async function checkDictsDiff(type) {
             return { same: false, msg: '未设置Rime目录', diffFiles: [], error: true, errorMsg: '未设置Rime目录' };
         }
         
+        // 如果是上传操作，检查是否需要先下载
+        if (type === 'upload') {
+            const syncStatus = await checkSyncStatus();
+            if (syncStatus.needDownload) {
+                return { 
+                    same: false, 
+                    diffFiles: [], 
+                    error: true, 
+                    errorMsg: syncStatus.message,
+                    needDownloadFirst: true
+                };
+            }
+        }
+        
         let allSame = true;
         const filesToSync = getFilesToSync();
         console.log(`[检查词库差异] 要检查的文件: ${filesToSync.join(', ')}`);
@@ -293,7 +539,11 @@ async function checkDictsDiff(type) {
         }
         
         console.log(`[检查词库差异] 差异检查完成。全部相同: ${allSame ? '是' : '否'}, 不同文件: ${diffFiles.length > 0 ? diffFiles.join(', ') : '无'}`);
-        return { same: allSame, diffFiles };    } catch (error) {
+        return { 
+            same: allSame, 
+            diffFiles
+        };
+    } catch (error) {
         console.error(`[检查词库差异] 错误:`, error);
         
         let errorMsg = '检查词库差异失败';
@@ -339,7 +589,17 @@ async function uploadDictToGit(mainWindow) {
         const folderCheck = await checkOrCreateRemoteFolder(octokit, {owner, repo, branch, folder}, mainWindow);
         if (!folderCheck.ok) return;        // 先比对差异
         const diffResult = await checkDictsDiff('upload');
-        if (diffResult.same) {
+        if (diffResult.error) {
+            await showErrorDialog(mainWindow, diffResult.errorMsg);
+            return;
+        }
+          if (diffResult.same) {
+            // 如果内容一致，同步远程时间到本地
+            const remoteCommitTime = await getRemoteLastCommitTime();
+            if (remoteCommitTime) {
+                updateLastSyncTime(remoteCommitTime.toISOString());
+                console.log(`[同步时间] 内容一致，已同步远程时间: ${remoteCommitTime.toISOString()}`);
+            }
             mainWindow.webContents.send('gitOperationResult', '本地词库与远程仓库一致，无需上传');
             return;
         }
@@ -393,14 +653,24 @@ async function uploadDictToGit(mainWindow) {
             // results数组现在直接包含了成功文件的文件名，不需要过滤和转换
             const successfulFiles = results;
             if (successfulFiles.length > 0) {
+                // 获取远程最新提交时间并更新本地同步时间
+                const remoteCommitTime = await getRemoteLastCommitTime();
+                if (remoteCommitTime) {
+                    updateLastSyncTime(remoteCommitTime.toISOString());
+                } else {
+                    // 如果无法获取远程时间，使用当前时间
+                    updateLastSyncTime();
+                }
+                
                 // 只显示成功上传的文件名列表，不再显示详细结果
                 mainWindow.webContents.send('gitOperationResult', `已成功上传词典：\n${successfulFiles.join('\n')}`);
             } else {
                 // 如果没有成功上传的文件，只显示简单提示，不显示详细结果
                 mainWindow.webContents.send('gitOperationResult', `上传操作未能完成，请检查网络或权限`);
             }
-        } else {            mainWindow.webContents.send('gitOperationResult', '没有需要上传的词典');
-        }    } catch (error) {
+        } else {
+            mainWindow.webContents.send('gitOperationResult', '没有需要上传的词典');
+        }} catch (error) {
         // 使用更友好的错误对话框，只显示简洁的错误消息
         let errorMsg = '上传失败';
         
@@ -450,9 +720,15 @@ async function downloadDictFromGit(mainWindow) {
                 }
                 throw e;
             }
-        }// 先比对差异
+        }        // 先比对差异
         const diffResult = await checkDictsDiff('download');
         if (diffResult.same) {
+            // 如果内容一致，同步远程时间到本地
+            const remoteCommitTime = await getRemoteLastCommitTime();
+            if (remoteCommitTime) {
+                updateLastSyncTime(remoteCommitTime.toISOString());
+                console.log(`[同步时间] 内容一致，已同步远程时间: ${remoteCommitTime.toISOString()}`);
+            }
             mainWindow.webContents.send('gitOperationResult', '本地词库与远程仓库一致，无需下载');
             return;
         }
@@ -510,14 +786,24 @@ async function downloadDictFromGit(mainWindow) {
             // results数组现在直接包含了成功文件的文件名，不需要过滤和转换
             const successfulFiles = results;
             if (successfulFiles.length > 0) {
+                // 获取远程最新提交时间并更新本地同步时间
+                const remoteCommitTime = await getRemoteLastCommitTime();
+                if (remoteCommitTime) {
+                    updateLastSyncTime(remoteCommitTime.toISOString());
+                } else {
+                    // 如果无法获取远程时间，使用当前时间
+                    updateLastSyncTime();
+                }
+                
                 // 只显示成功下载的文件名列表，不再显示详细结果
                 mainWindow.webContents.send('gitOperationResult', `已成功下载词典：\n${successfulFiles.join('\n')}`);
             } else {
                 // 如果没有成功下载的文件，只显示简单提示，不显示详细结果
                 mainWindow.webContents.send('gitOperationResult', `下载操作未能完成，请检查网络或远程仓库`);
             }
-        } else {            mainWindow.webContents.send('gitOperationResult', '没有需要下载的词典');
-        }    } catch (error) {
+        } else {
+            mainWindow.webContents.send('gitOperationResult', '没有需要下载的词典');
+        }} catch (error) {
         // 使用更友好的错误对话框，只显示简洁的错误消息
         let errorMsg = '下载失败';
         
@@ -543,5 +829,7 @@ module.exports = {
     checkDictsDiff,
     checkGitHubConnection,
     showErrorDialog,
+    checkSyncStatus,
+    getRemoteLastCommitTime,
     setConfirmCreateRemoteFolderCallback: setConfirmCreateRemoteFolderCallbackExport
 };

@@ -794,9 +794,24 @@ app.on('ready', () => {
     console.log('Chromium版本:', process.versions.chrome);
     console.log('Node版本:', process.versions.node);
     console.log('==========================');
-      createMainWindow()
+    
+    createMainWindow()
     getDictFileList() // 读取目录中的所有码表文件
     createMenu() // 创建菜单
+      // 程序启动后检查同步状态
+    setTimeout(async () => {
+        try {
+            const { checkSyncStatus } = require('./js/syncGit');
+            const syncStatus = await checkSyncStatus(mainWindow);
+            
+            if (syncStatus.needDownload && mainWindow && !mainWindow.isDestroyed()) {
+                // 向主窗口发送同步状态提醒
+                mainWindow.webContents.send('showSyncStatusWarning', syncStatus.message);
+            }
+        } catch (error) {
+            console.log('[启动检查] 同步状态检查失败:', error.message);
+        }
+    }, 2000); // 延迟2秒执行，确保主窗口已完全加载
     
     // 添加主题变更广播监听器
     ipcMain.on('theme-changed', (event, theme) => {

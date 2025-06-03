@@ -34,7 +34,8 @@ const DEFAULT_CONFIG = {
         'wubi86_jidian_user_hamster.dict.yaml',
         'wubi86_jidian_extra.dict.yaml',
         'wubi86_jidian_extra_district.dict.yaml'
-    ]
+    ],
+    lastSyncTime: "1970-01-01T00:00:00.000Z"      // 最后同步时间，默认为很早的时间表示从未同步
 }
 
 module.exports = {

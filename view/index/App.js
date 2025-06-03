@@ -200,6 +200,45 @@ const app = {
             this.dialogMsg = msg
             this.showDialog = true
             // 移除自动关闭弹窗的定时器，改为由用户点击关闭
+        })        // 监听同步状态警告
+        ipcRenderer.on('showSyncStatusWarning', (event, message) => {
+            this.dialogMsg = message
+            this.showDialog = true
+            // 提供确认按钮
+            this.$nextTick(() => {
+                let dialog = document.querySelector('.custom-dialog-footer') || document.body
+                dialog.innerHTML = '' // 清空原有内容
+                let btns = document.createElement('div')
+                btns.style = 'display:flex;justify-content:center;'
+                btns.innerHTML = `<button id="btn-confirm-sync-warning" class="btn btn-primary">知道了</button>`
+                dialog.appendChild(btns)
+                document.getElementById('btn-confirm-sync-warning').onclick = () => {
+                    this.showDialog = false
+                }
+            })
+        })
+
+        // 监听确认上传对话框请求
+        ipcRenderer.on('showConfirmDialog', (event, message) => {
+            this.dialogMsg = message
+            this.showDialog = true
+            // 提供确认/取消按钮
+            this.$nextTick(() => {
+                let dialog = document.querySelector('.custom-dialog-footer') || document.body
+                dialog.innerHTML = '' // 清空原有内容
+                let btns = document.createElement('div')
+                btns.style = 'display:flex;justify-content:center;gap:18px;'
+                btns.innerHTML = `<button id="btn-confirm-upload" class="btn btn-primary">确认上传</button><button id="btn-cancel-upload" class="btn btn-orange">取消</button>`
+                dialog.appendChild(btns)
+                document.getElementById('btn-confirm-upload').onclick = () => {
+                    ipcRenderer.send('confirmCreateRemoteFolderResult', true)
+                    this.showDialog = false
+                }
+                document.getElementById('btn-cancel-upload').onclick = () => {
+                    ipcRenderer.send('confirmCreateRemoteFolderResult', false)
+                    this.showDialog = false
+                }
+            })
         })
 
         // 监听错误对话框请求
@@ -243,29 +282,8 @@ const app = {
                     ipcRenderer.send('confirmCreateRemoteFolderResult', false);
                     this.showDialog = false;
                 };
-            });
-        })
+            });        })
         
-        // 监听错误对话框请求
-        ipcRenderer.on('showErrorDialog', (event, errorMsg) => {
-            this.dialogMsg = errorMsg;
-            this.showDialog = true;
-            // 提供确认按钮
-            this.$nextTick(() => {
-                // 动态插入按钮
-                let dialog = document.querySelector('.custom-dialog-footer') || document.body;
-                dialog.innerHTML = ''; // 清空原有内容
-                let btns = document.createElement('div');
-                btns.style = 'display:flex;justify-content:center;';
-                btns.innerHTML = `<button id="btn-confirm-error" class="btn btn-primary">确定</button>`;
-                dialog.appendChild(btns);
-                document.getElementById('btn-confirm-error').onclick = () => {
-                    ipcRenderer.send('confirmCreateRemoteFolderResult', true); // 复用现有通道
-                    this.showDialog = false;
-                };
-            });
-        })
-
         // 监听 config.html 词典文件变更事件
         ipcRenderer.on('ConfigWindow:DictFilesChanged', () => {
             ipcRenderer.send('MainWindow:RequestConfigFile'); // 重新请求配置
