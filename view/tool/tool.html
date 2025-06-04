@@ -21,21 +21,10 @@
             });
         }
         
-        // 强化暗黑模式下按钮选中效果
+        // 确保工具面板背景色是暗黑模式
         if (savedTheme === 'black' || (savedTheme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             // 延迟执行确保Vue已经渲染完成
             setTimeout(function() {
-                // 确保所有选中状态的按钮样式正确应用
-                document.querySelectorAll('.btn-orange').forEach(function(btn) {
-                    btn.style.background = '#ffb300';
-                    btn.style.borderColor = '#e89c00';
-                    btn.style.color = '#000';
-                    btn.style.boxShadow = '0 0 15px rgba(255, 179, 0, 0.9)';
-                    btn.style.transform = 'scale(1.08)';
-                    btn.style.fontWeight = 'bold';
-                });
-                
-                // 确保工具面板背景色是暗黑模式
                 document.querySelectorAll('.tool-panel').forEach(function(panel) {
                     panel.style.backgroundColor = '#1c1f24';
                 });
